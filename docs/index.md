@@ -38,7 +38,7 @@ title: PVK Console Blog
 | Component | Description | Status |
 |-----------|-------------|--------|
 | 🔌 Hardware | PCB design and electronics | In Development |
-| 💾 Firmware | Microcontroller code | Planning |
+| 💾 Firmware | Microcontroller code | In Development |
 | 💻 PC Software | Desktop application | In Development |
 | 📚 Documentation | Guides and tutorials | Ongoing |
 
@@ -47,5 +47,5 @@ title: PVK Console Blog
 <div style="background: #e7f3ff; padding: 20px; border-radius: 8px; border-left: 4px solid #0066cc;">
   <h3 style="margin-top: 0;">🤝 Get Involved</h3>
   <p>This is a community-driven project and we welcome contributors! Whether you're into hardware design, firmware development, or software engineering – there's a place for you here.</p>
-  <p><strong>Check out our <a href="https://github.com/IceUnicorn93/pvk-console">GitHub Repository</a> to get started!</strong></p>
+  <p><strong>Check out our <a href="https://github.com/IceUnicorn93/PVK-Controller">GitHub Repository</a> to get started!</strong></p>
 </div>

@@ -66,7 +66,7 @@ This is a **community project**, and we need **YOU**!
 
 ### Ready to Get Started?
 
-👉 **Check out our [GitHub Repository](https://github.com/IceUnicorn93/pvk-console)**
+👉 **Check out our [GitHub Repository](https://github.com/IceUnicorn93/PVK-Controller)**
 
 - Browse the codebase and documentation
 - Pick an issue labeled "good first issue"
