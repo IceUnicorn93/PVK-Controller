@@ -1,6 +1,5 @@
 title: "PVKK Console"
 description: "Open Source Replica of the PVKK Defense Console"
-theme: Merlot
 baseurl: "/pvk-console"
 remote_theme: pages-themes/merlot@v0.2.0
 plugins:
