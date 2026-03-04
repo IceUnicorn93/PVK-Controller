@@ -1,0 +1,11 @@
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\bin\Debug\PVKK-Simulator.exe.config
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\bin\Debug\PVKK-Simulator.exe
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\bin\Debug\PVKK-Simulator.pdb
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK-Simulator.csproj.AssemblyReference.cache
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK_Simulator.Form1.resources
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK_Simulator.Properties.Resources.resources
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK-Simulator.csproj.GenerateResource.cache
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK-Simulator.csproj.CoreCompileInputs.cache
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK-Simulator.exe
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK-Simulator.pdb
+E:\C# Repos\PVKK-Simulator\PVKK-Simulator\obj\Debug\PVKK-Simulator.exe.config

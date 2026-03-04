@@ -1,0 +1,8 @@
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\bin\Debug\SerialPortBitmapTester.exe.config
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\bin\Debug\SerialPortBitmapTester.exe
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\bin\Debug\SerialPortBitmapTester.pdb
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\obj\Debug\SerialPortBitmapTester.csproj.AssemblyReference.cache
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\obj\Debug\SerialPortBitmapTester.csproj.CoreCompileInputs.cache
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\obj\Debug\SerialPortBitmapTester.exe
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\obj\Debug\SerialPortBitmapTester.pdb
+E:\C# Repos\PVKK-Simulator\SerialPortBitmapTester\obj\Debug\SerialPortBitmapTester.exe.config

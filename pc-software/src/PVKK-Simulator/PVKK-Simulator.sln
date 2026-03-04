@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36603.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PVKK-Simulator", "PVKK-Simulator\PVKK-Simulator.csproj", "{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerialPortBitmapTester", "SerialPortBitmapTester\SerialPortBitmapTester.csproj", "{7585CEEE-EF26-4D4E-A6C2-1B9577EBA5F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7585CEEE-EF26-4D4E-A6C2-1B9577EBA5F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7585CEEE-EF26-4D4E-A6C2-1B9577EBA5F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7585CEEE-EF26-4D4E-A6C2-1B9577EBA5F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7585CEEE-EF26-4D4E-A6C2-1B9577EBA5F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {44FD2502-F990-4A42-9A16-D2DA1AAD8989}
+	EndGlobalSection
+EndGlobal

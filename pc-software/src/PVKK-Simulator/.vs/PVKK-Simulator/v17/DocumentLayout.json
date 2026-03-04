@@ -1,0 +1,97 @@
+{
+  "Version": 1,
+  "WorkspaceRootPath": "E:\\C# Repos\\PVKK-Simulator\\",
+  "Documents": [
+    {
+      "AbsoluteMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|e:\\c# repos\\pvkk-simulator\\pvkk-simulator\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|solutionrelative:pvkk-simulator\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|E:\\C# Repos\\PVKK-Simulator\\pvkk-simulator\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|solutionrelative:pvkk-simulator\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|E:\\C# Repos\\PVKK-Simulator\\pvkk-simulator\\classes\\tcp_connector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|solutionrelative:pvkk-simulator\\classes\\tcp_connector.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    },
+    {
+      "AbsoluteMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|E:\\C# Repos\\PVKK-Simulator\\pvkk-simulator\\enums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
+      "RelativeMoniker": "D:0:0:{29CDFCC9-6CAE-4C20-8B9F-24883C7F7867}|PVKK-Simulator\\PVKK-Simulator.csproj|solutionrelative:pvkk-simulator\\enums.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
+    }
+  ],
+  "DocumentGroupContainers": [
+    {
+      "Orientation": 0,
+      "VerticalTabListWidth": 256,
+      "DocumentGroups": [
+        {
+          "DockedWidth": 178,
+          "SelectedChildIndex": 6,
+          "Children": [
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{1c4feeaa-4718-4aa9-859d-94ce25d182ba}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:128:0:{116d2292-e37d-41cd-a077-ebacac4c8cc4}"
+            },
+            {
+              "$type": "Bookmark",
+              "Name": "ST:0:0:{aa2115a1-9712-457b-9047-dbb71ca2cdd2}"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 2,
+              "Title": "TCP_Connector.cs",
+              "DocumentMoniker": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Classes\\TCP_Connector.cs",
+              "RelativeDocumentMoniker": "PVKK-Simulator\\Classes\\TCP_Connector.cs",
+              "ToolTip": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Classes\\TCP_Connector.cs",
+              "RelativeToolTip": "PVKK-Simulator\\Classes\\TCP_Connector.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAB8AAABOAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-01T07:45:35.93Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 3,
+              "Title": "Enums.cs",
+              "DocumentMoniker": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Enums.cs",
+              "RelativeDocumentMoniker": "PVKK-Simulator\\Enums.cs",
+              "ToolTip": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Enums.cs",
+              "RelativeToolTip": "PVKK-Simulator\\Enums.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAACAAAAAjAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-01T07:26:27.655Z"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.cs [Entwurf]",
+              "DocumentMoniker": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Form1.cs",
+              "RelativeDocumentMoniker": "PVKK-Simulator\\Form1.cs",
+              "ToolTip": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Form1.cs [Entwurf]",
+              "RelativeToolTip": "PVKK-Simulator\\Form1.cs [Entwurf]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-03-01T07:15:19.643Z",
+              "EditorCaption": " [Entwurf]"
+            },
+            {
+              "$type": "Document",
+              "DocumentIndex": 0,
+              "Title": "Form1.cs",
+              "DocumentMoniker": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Form1.cs",
+              "RelativeDocumentMoniker": "PVKK-Simulator\\Form1.cs",
+              "ToolTip": "E:\\C# Repos\\PVKK-Simulator\\PVKK-Simulator\\Form1.cs",
+              "RelativeToolTip": "PVKK-Simulator\\Form1.cs",
+              "ViewState": "AgIAAAAAAAAAAAAAAAAAAAUAAAASAAAAAAAAAA==",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-02-14T14:31:33.084Z",
+              "EditorCaption": ""
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
