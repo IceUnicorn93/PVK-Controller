@@ -2,7 +2,7 @@
 layout: post
 title: "Welcome to the PVK Console Project"
 date: 2026-03-04
-categories: announcement
+permalink: /posts/welcome-to-pvk-console/
 ---
 
 We're excited to announce the launch of the PVK Console project blog!
