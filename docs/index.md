@@ -1,13 +1,13 @@
 ---
 layout: home
-title: PVK Console Project
+title: PVK Console Blog
 ---
 
-# PVK Console – Open Source Replica
+# PVK Console – Project Blog
 
-A Desktop-Replik of the Planetenverteidigungskonsole from PVKK.
+Welcome to the PVK Console project development blog!
 
-## Was ist das?
+Here you'll find the latest updates, progress reports, and technical details
+about the development of the desktop replica of the PVKK planetary defense console.
 
-A Community-Projekt to create the Console from PVKK as a
-functioning Desktop-Version.
+## Recent Posts
