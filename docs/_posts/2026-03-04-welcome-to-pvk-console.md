@@ -53,10 +53,7 @@ Over the coming weeks and months, you can expect:
 We have successfully completed the first prototype PCB. We are finalizing the firmware and adding the last features. The desktop application is just for testing purposes, but we will be adding more features and improving the UI in the coming weeks. We are also working on the documentation as well as the schematics and PCB design. We are positive that we will be able to release the first mod version of the console shortly after the game is released.
 
 Here is a sneak peek of the current prototype PCB in action:
-<video width="320" height="240" controls>
-  <source src="https://youtu.be/W_m9zAJIbgY" type="video/mp4">
-</video>
-[Video](https://youtu.be/W_m9zAJIbgY)
+[![](https://markdown-videos-api.jorgenkh.no/youtube/W_m9zAJIbgY)](https://youtu.be/W_m9zAJIbgY)
 
 ## 🤝 Join the Mission!
 
