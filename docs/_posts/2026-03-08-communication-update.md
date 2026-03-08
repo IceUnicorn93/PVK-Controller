@@ -21,17 +21,16 @@ The PC game (the PVKK Simulator) communicates with the **Master Gateway** over a
 ### Master Gateway ↔ All Boards — SPI
 The Master Gateway acts as the SPI master and talks to all controller boards as SPI slaves. SPI was chosen for its speed and simplicity, making it well suited for the short-distance, time-sensitive communication between boards inside the console enclosure.
 
-<img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/ConnectionDiagram.png?raw=true" alt="Connection Diagram" width="600" height="400">
-![Connection Diagram]({{ 'images/ConnectionDiagram.png' | relative_url }})
-![Working SPI Communication]({{ 'images/WorkingSPICommunication.png' | relative_url }})
+<img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/ConnectionDiagram.png?raw=true" alt="Connection Diagram" width="1600" height="369">
+<img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/WorkingSPICommunication.png?raw=true" alt="Working SPI Communication" width="482" height="151">
 
 ---
 
 ## 🧪 Hello World Prototype
 
 To validate the SPI setup, a small prototype was built using **two ESP32 microcontrollers** — one acting as the SPI master and one as the SPI slave. The prototype successfully demonstrated a basic data exchange between the two devices, confirming that the chosen approach works and will scale to the full set of boards.
-![Prototype]({{ 'images/IMG_20260307_130307.jpg' | relative_url }})
-
+<img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/IMG_20260307_130307.jpg?raw=true" alt="Prototype" width="3840" height="2160">
+    
 ---
 
 ## 📄 Shared Protocol File
