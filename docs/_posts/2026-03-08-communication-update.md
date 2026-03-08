@@ -21,6 +21,7 @@ The PC game (the PVKK Simulator) communicates with the **Master Gateway** over a
 ### Master Gateway ↔ All Boards — SPI
 The Master Gateway acts as the SPI master and talks to all controller boards as SPI slaves. SPI was chosen for its speed and simplicity, making it well suited for the short-distance, time-sensitive communication between boards inside the console enclosure.
 
+<img src="images/ConnectionDiagram.png" class="img-responsive" alt=""> </div>
 ![Connection Diagram]({{ 'images/ConnectionDiagram.png' | relative_url }})
 ![Working SPI Communication]({{ 'images/WorkingSPICommunication.png' | relative_url }})
 
