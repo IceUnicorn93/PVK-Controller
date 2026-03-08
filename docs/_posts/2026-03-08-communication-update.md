@@ -22,17 +22,7 @@ The PC game (the PVKK Simulator) communicates with the **Master Gateway** over a
 The Master Gateway acts as the SPI master and talks to all controller boards as SPI slaves. SPI was chosen for its speed and simplicity, making it well suited for the short-distance, time-sensitive communication between boards inside the console enclosure.
 
 
-```mermaid
-graph TD
-
-    PC[🖥️ PC / Game] -->|USB Seriell| Master[ESP32 Master Gateway]
-    Master -->|SPI| P1[Platine 1: Upper Center]
-    Master -->|SPI| P2[Platine 2: Target List]
-    Master -->|SPI| P3[Platine 3: Lower Center]
-    Master -->|SPI| P4[Platine 4: ???]
-    Master -->|SPI| P5[Platine 5: ???]
-    Master -->|SPI| P6[Platine 6: ???]
-```
+![Connection Diagram](Connection%20Diagram.png)
 
 ---
 
