@@ -16,7 +16,7 @@ This week we focused on one of the most fundamental aspects of the project — h
 The system is built around two communication layers:
 
 ### Game ↔ Master Gateway — Serial
-The PC game (the PVKK Simulator) communicates with the **Master Gateway** over a **Serial connection**. This keeps the interface simple and reliable, and allows the game to send display/state data to the console and receive button/sensor input back.
+The PC game (PVKK) communicates with the **Master Gateway** over a **Serial connection**. This keeps the interface simple and reliable, and allows the game to send display/state data to the console and receive button/sensor input back.
 
 ### Master Gateway ↔ All Boards — SPI
 The Master Gateway acts as the SPI master and talks to all controller boards as SPI slaves. SPI was chosen for its speed and simplicity, making it well suited for the short-distance, time-sensitive communication between boards inside the console enclosure.
