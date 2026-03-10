@@ -32,14 +32,14 @@ The Master Gateway acts as the SPI master and talks to all controller boards as 
                     ←── SPI ──→  [ ... ]
 ```
 <img src="../../images/ConnectionDiagram.png" alt="Connection Diagram" width="502" height="115">
-<img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/WorkingSPICommunication.png?raw=true" alt="Working SPI Communication" width="482" height="151">
+<img src="../../images/WorkingSPICommunication.png" alt="Working SPI Communication" width="482" height="151">
 
 ---
 
 ## 🧪 Hello World Prototype
 
 To validate the SPI setup, a small prototype was built using **two ESP32 microcontrollers** — one acting as the SPI master and one as the SPI slave. The prototype successfully demonstrated a basic data exchange between the two devices, confirming that the chosen approach works and will scale to the full set of boards.
-<img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/IMG_20260307_130307.jpg?raw=true" alt="Prototype" width="502" height="282">
+<img src="../../images/IMG_20260307_130307.jpg" alt="Prototype" width="502" height="282">
     
 ---
 
