@@ -31,7 +31,7 @@ The Master Gateway acts as the SPI master and talks to all controller boards as 
                     ←── SPI ──→  [ Board 3 ]
                     ←── SPI ──→  [ ... ]
 ```
-<img src="images/ConnectionDiagram.png" alt="Connection Diagram" width="502" height="115">
+<img src="./images/ConnectionDiagram.png" alt="Connection Diagram" width="502" height="115">
 <img src="https://github.com/IceUnicorn93/PVK-Controller/blob/main/images/WorkingSPICommunication.png?raw=true" alt="Working SPI Communication" width="482" height="151">
 
 ---
