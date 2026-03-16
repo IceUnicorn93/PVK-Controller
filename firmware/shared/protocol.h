@@ -1,4 +1,4 @@
-const uint8_t PayloadSize = 250;
+const uint8_t PayloadSize = 240;
 const uint8_t AnswerSize = 30;
 
 /*
@@ -62,25 +62,25 @@ typedef struct __attribute__((packed)) {
 // Board 2 (Upper Right / Target List)
 //--------------------------------------------------------------------------------
 typedef struct __attribute__((packed)) {
-	int     Target1Identification;			// 2 Bytes
+	int16_t Target1Identification;			// 2 Bytes
 	float   Target1Altitude;				// 4 Bytes
 	float   Target1EstimatedTimeOfArrival;	// 4 Bytes
 	float   Target1Angle;					// 4 Bytes
 	uint8_t Target1Speed;					// 1 Byte
 	
-	int     Target2Identification;			// 2 Bytes
+	int16_t Target2Identification;			// 2 Bytes
 	float   Target2Altitude;				// 4 Bytes
 	float   Target2EstimatedTimeOfArrival;	// 4 Bytes
 	float   Target2Angle;					// 4 Bytes
 	uint8_t Target2Speed;					// 1 Byte
 	
-	int     Target3Identification;			// 2 Bytes
+	int16_t Target3Identification;			// 2 Bytes
 	float   Target3Altitude;				// 4 Bytes
 	float   Target3EstimatedTimeOfArrival;	// 4 Bytes
 	float   Target3Angle;					// 4 Bytes
 	uint8_t Target3Speed;					// 1 Byte
 	
-	int     Target4Identification;			// 2 Bytes
+	int16_t Target4Identification;			// 2 Bytes
 	float   Target4Altitude;				// 4 Bytes
 	float   Target4EstimatedTimeOfArrival;	// 4 Bytes
 	float   Target4Angle;					// 4 Bytes

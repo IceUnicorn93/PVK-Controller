@@ -1,0 +1,9 @@
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.csproj.AssemblyReference.cache
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK_Serial_Test.Properties.Resources.resources
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.csproj.GenerateResource.cache
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.csproj.CoreCompileInputs.cache
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\PVKK-Serial-Test.exe.config
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\PVKK-Serial-Test.exe
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\PVKK-Serial-Test.pdb
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.exe
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.pdb

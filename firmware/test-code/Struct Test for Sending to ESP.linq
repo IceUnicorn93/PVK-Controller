@@ -7,16 +7,33 @@
 void Main()
 {
 	// Senden
-	var header = new PacketHeader { boardId = 1, payload = new byte[250] };
-	var payload = new PayloadBoard1
+	//var header = new PacketHeader { boardId = 1, payload = new byte[250] };
+	//var payload = new PayloadBoard1
+	//{
+	//	leds = new byte[137],
+	//	brightness = 80,
+	//	displays = new byte[] { 42, 100, 0, 255, 12 }
+	//};
+
+	//header.checksum = CalcChecksum(StructToBytes(payload));
+	//header.payload = StructToBytes(payload);
+	
+	var payload = new PayloadBoard2
 	{
-		leds = new byte[137],
-		brightness = 80,
-		displays = new byte[] { 42, 100, 0, 255, 12 }
+		Target1Identification = 1234,
+		Target1Speed = 25,
+		Target1Altitude = 12.34f,
+		Target1Angle = -120.53f,
+		Target1EstimatedTimeOfArrival = -7.26f
 	};
 
-	header.checksum = CalcChecksum(StructToBytes(payload));
-	header.payload = StructToBytes(payload);
+	using (SerialPort port = new SerialPort("COM5", 115200))
+	{
+		port.Open();
+		byte[] headerBytes = StructToBytes(payload);
+		port.Write(headerBytes, 0, headerBytes.Length);
+		port.Close();
+	}
 }
 
 public static byte CalcChecksum(byte[] data)
