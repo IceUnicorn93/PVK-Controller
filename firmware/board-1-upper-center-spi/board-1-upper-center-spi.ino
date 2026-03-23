@@ -1,11 +1,7 @@
-//--------------------------------------------------------------------------------
-// SPI-Data
-//--------------------------------------------------------------------------------
-
 #include <ESP32SPISlave.h>
-#include <../../shared/protocol.h>
+#include <../shared/protocol.h>
+
 ESP32SPISlave slave;
-uint8_t rxBuffer[PayloadSize + 2];
 
 //--------------------------------------------------------------------------------
 // Displays and I2C Multiplexer
@@ -44,8 +40,6 @@ void SetupDisplay(U8G2 &display, uint8_t channel)
   display.begin();
   display.setFont(u8g2_font_7Segments_26x42_mn);
 }
-
-
 
 uint8_t lastAmmo = 0;
 uint8_t lastKWG = 0;
@@ -388,14 +382,14 @@ const int ledColors_2[NUMPIXELS]
   16755001  // Energy 1
 };
 
-//--------------------------------------------------------------------------------
-// Setup Method
-//--------------------------------------------------------------------------------
+static constexpr size_t BUFFER_SIZE = sizeof(AnswerSize);
+uint8_t rxBuffer[BUFFER_SIZE];
+uint8_t txBuffer[BUFFER_SIZE]; //= {'W', 'E', 'L', 'T', '!', 0x00};
 
-void setup()
-{
+void setup() {
   pixels.setPixelColor(0, 255, 0, 0);
   pixels.show();
+
   // Set Button Pins
   pinMode(analogePin, INPUT);
   pinMode(prime1Pin, INPUT);
@@ -407,11 +401,6 @@ void setup()
   pinMode(clear3Pin, INPUT);
   pinMode(clear4Pin, INPUT);
   pinMode(loadPin, INPUT);
-
-  // Setup SPI
-  slave.setDataMode(SPI_MODE0);
-  slave.setQueueSize(1);
-  slave.begin(VSPI);
 
   // Setup I2C, Multiplexer (Mux) and Displays
   Wire.begin();
@@ -427,86 +416,77 @@ void setup()
   SetupDisplay(u8g2_4, 3);
   SetupDisplay(u8g2_5, 4);
 
+  slave.setDataMode(SPI_MODE0);
+  slave.setQueueSize(1);
+  slave.begin(VSPI);
+
   pixels.setPixelColor(0, 0, 255, 0);
   pixels.show();
 }
 
-bool doReturn = true;
-
-void loop()
-{
-  //size_t received = slave.transfer(response, response2, 242);
-
-  //// create answer package (AnswerBoard1)
-  // uint8_t response[242];
-  // AnswerBoard1 answer;
-  // handleData(&answer);
-  // memcpy(&response, &answer, sizeof(AnswerBoard1));
-
-  // SetDisplayData(u8g2, 0, String(sizeof(rxBuffer)).c_str());
-  // SetDisplayData(u8g2_2, 1, String(sizeof(AnswerBoard1)).c_str());
-
-  if(doReturn) return;
-  doReturn = true;
+void loop() {
+  AnswerBoard1 response;
+  handleData(&response);
+  memcpy(txBuffer, &response, sizeof(AnswerBoard1));
 
   // Blocking transfer: wartet bis Master Daten sendet
-  // size_t received = slave.transfer(response, rxBuffer, sizeof(AnswerBoard1));
+  size_t received = slave.transfer(txBuffer, rxBuffer, BUFFER_SIZE);
 
+  SetDisplayData(u8g2, 0, String(received).c_str());
+  delay(10000);
+  if (received == sizeof(SerialPacket))
+  {
+    pixels.setPixelColor(0, 0, 0, 255);
 
-  // SetDisplayData(u8g2, 0, String(received).c_str());
-  // if (received == sizeof(SerialPacket))
-  // {
-  //   doReturn = true;
-  //   pixels.setPixelColor(0, 0, 0, 255);
+    // //cast recieved Data into SerialPackage
+    // SerialPacket packet;
+    // memcpy(&packet, rxBuffer, sizeof(SerialPacket));
 
-  //   //cast recieved Data into SerialPackage
-  //   SerialPacket packet;
-  //   memcpy(&packet, rxBuffer, sizeof(SerialPacket));
+    // //check if checksum is correct (based on payload)
+    // if(packet.checksum == calcChecksum(packet.payload, PayloadSize))
+    // {
+    //   // cast payload into PayloadBoard1
+    //   PayloadBoard1 payload;
+    //   memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
 
-  //   //check if checksum is correct (based on payload)
-  //   if(packet.checksum == calcChecksum(packet.payload, PayloadSize))
-  //   {
-  //     // cast payload into PayloadBoard1
-  //     PayloadBoard1 payload;
-  //     memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
-
-  //     for(int i = 0; i < NUMPIXELS; i++)
-  //       if(payload.leds[i] == 0) pixels.setPixelColor(i, 0);
-  //       else if(payload.leds[i] == 1) pixels.setPixelColor(i, ledColors_1[i]);
-  //       else  if(payload.leds[i] == 2) pixels.setPixelColor(i, ledColors_2[i]);
+    //   for(int i = 0; i < NUMPIXELS; i++)
+    //     if(payload.leds[i] == 0) pixels.setPixelColor(i, 0);
+    //     else if(payload.leds[i] == 1) pixels.setPixelColor(i, ledColors_1[i]);
+    //     else  if(payload.leds[i] == 2) pixels.setPixelColor(i, ledColors_2[i]);
       
-  //     pixels.setBrightness(payload.brightness);
-  //     pixels.show();
+    //   pixels.setBrightness(payload.brightness);
+    //   pixels.show();
 
-  //     if(lastAmmo != payload.displays[0])
-  //     {
-  //       if (payload.displays[0] == 0) SetDisplayData(u8g2, 0, "");
-  //       else if (payload.displays[0] == 1) SetDisplayData(u8g2, 0, "KWG");
-  //       else if (payload.displays[0] == 2) SetDisplayData(u8g2, 0, "PGM");
-  //       else if (payload.displays[0] == 3) SetDisplayData(u8g2, 0, "HE");
-  //       else if (payload.displays[0] == 4) SetDisplayData(u8g2, 0, "Laser");
-  //       lastAmmo = payload.displays[0];
-  //     }
-  //     if(lastKWG != payload.displays[1])
-  //     {
-  //       SetDisplayData(u8g2_2, 1, String(payload.displays[1]).c_str());
-  //       lastKWG = payload.displays[1];
-  //     }
-  //     if(lastPGM != payload.displays[2])
-  //     {
-  //       SetDisplayData(u8g2_3, 2, String(payload.displays[2]).c_str());
-  //       lastPGM = payload.displays[2];
-  //     }
-  //     if(lastHE != payload.displays[3])
-  //     {
-  //       SetDisplayData(u8g2_4, 3, String(payload.displays[3]).c_str());
-  //       lastHE = payload.displays[3];
-  //     }
-  //     if(lastLaser != payload.displays[4])
-  //     {
-  //       SetDisplayData(u8g2_5, 4, String(payload.displays[4]).c_str());
-  //       lastLaser = payload.displays[4];
-  //     }
-  //   }
-  //}
+    //   if(lastAmmo != payload.displays[0])
+    //   {
+    //     if (payload.displays[0] == 0) SetDisplayData(u8g2, 0, "");
+    //     else if (payload.displays[0] == 1) SetDisplayData(u8g2, 0, "KWG");
+    //     else if (payload.displays[0] == 2) SetDisplayData(u8g2, 0, "PGM");
+    //     else if (payload.displays[0] == 3) SetDisplayData(u8g2, 0, "HE");
+    //     else if (payload.displays[0] == 4) SetDisplayData(u8g2, 0, "Laser");
+    //     lastAmmo = payload.displays[0];
+    //   }
+    //   if(lastKWG != payload.displays[1])
+    //   {
+    //     SetDisplayData(u8g2_2, 1, String(payload.displays[1]).c_str());
+    //     lastKWG = payload.displays[1];
+    //   }
+    //   if(lastPGM != payload.displays[2])
+    //   {
+    //     SetDisplayData(u8g2_3, 2, String(payload.displays[2]).c_str());
+    //     lastPGM = payload.displays[2];
+    //   }
+    //   if(lastHE != payload.displays[3])
+    //   {
+    //     SetDisplayData(u8g2_4, 3, String(payload.displays[3]).c_str());
+    //     lastHE = payload.displays[3];
+    //   }
+    //   if(lastLaser != payload.displays[4])
+    //   {
+    //     SetDisplayData(u8g2_5, 4, String(payload.displays[4]).c_str());
+    //     lastLaser = payload.displays[4];
+    //   }
+    //}
+  }
 }
+

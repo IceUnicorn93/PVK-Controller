@@ -45,7 +45,7 @@ namespace PVKK_Serial_Test
 
 
         const byte PayloadSize = 240;
-        const byte AnswerSize = 30;
+        const byte AnswerSize = 242;
 
         /*
         Payload for Boards
@@ -72,8 +72,8 @@ namespace PVKK_Serial_Test
         //--------------------------------------------------------------------------------
         // Header
         //--------------------------------------------------------------------------------
-        [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PacketHeader
+        [StructLayout(LayoutKind.Sequential, Pack = 1, Size = PayloadSize + 2)]
+        public struct PacketHeader
         {
             public byte boardId;
             public byte checksum;
@@ -84,18 +84,18 @@ namespace PVKK_Serial_Test
         // Board 1 (Upper Center)
         //--------------------------------------------------------------------------------
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PayloadBoard1
+        public struct PayloadBoard1
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 137)]
             public byte[] leds;
             public byte brightness;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] displays;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize - 137 - 1 - 5 - 1)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize - 137 - 1 - 5)]
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnswerBoard1
+        public struct AnswerBoard1
         {
             public byte AmmoSelection;
 
@@ -149,7 +149,7 @@ namespace PVKK_Serial_Test
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnswerBoard2
+        public struct AnswerBoard2
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = AnswerSize)]
             public byte[] spare;
@@ -158,7 +158,7 @@ namespace PVKK_Serial_Test
         // Board 3 (Lower Center)
         //--------------------------------------------------------------------------------
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PayloadBoard3
+        public struct PayloadBoard3
         {
             public int TargetIdentification;        // 2 Byte
             public byte TargetIdentificationValid;  // 1 Byte
@@ -186,7 +186,7 @@ namespace PVKK_Serial_Test
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnswerBoard3
+        public struct AnswerBoard3
         {
             public byte AmingCalcButton1;
             public byte AmingCalcButton2;
@@ -221,13 +221,13 @@ namespace PVKK_Serial_Test
         // Board 4
         //--------------------------------------------------------------------------------
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PayloadBoard4
+        public struct PayloadBoard4
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize)]
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnswerBoard4
+        public struct AnswerBoard4
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = AnswerSize)]
             public byte[] spare;
@@ -236,13 +236,13 @@ namespace PVKK_Serial_Test
         // Board 5
         //--------------------------------------------------------------------------------
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PayloadBoard5
+        public struct PayloadBoard5
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize)]
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnswerBoard5
+        public struct AnswerBoard5
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = AnswerSize)]
             public byte[] spare;
@@ -251,16 +251,25 @@ namespace PVKK_Serial_Test
         // Board 6
         //--------------------------------------------------------------------------------
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct PayloadBoard6
+        public struct PayloadBoard6
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize)]
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
-        struct AnswerBoard6
+        public struct AnswerBoard6
         {
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = AnswerSize)]
             public byte[] spare;
+        }
+
+
+        public static byte CalcChecksum(byte[] data, int len)
+        {
+            byte sum = 0;
+            for (int i = 0; i < len; i++)
+                sum ^= data[i];
+            return sum;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Drawing;
 using System.IO.Ports;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -25,98 +26,102 @@ namespace PVKK_Serial_Test
 
         private void SendDataToESP32()
         {
-            while (true)
+            var rng = new Random();
+            //var payload = new Structs.PayloadBoard2
+            //{
+            //    Target1Identification = 1234,
+            //    Target1Speed = 25,
+            //    Target1Altitude = 12.34f,
+            //    Target1Angle = -120.53f,
+            //    Target1EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
+
+            //    Target2Identification = 1234,
+            //    Target2Speed = 25,
+            //    Target2Altitude = 12.34f,
+            //    Target2Angle = -120.53f,
+            //    Target2EstimatedTimeOfArrival = -7.26f,
+
+            //    Target3Identification = 1234,
+            //    Target3Speed = 25,
+            //    Target3Altitude = 12.34f,
+            //    Target3Angle = -120.53f,
+            //    Target3EstimatedTimeOfArrival = -7.26f,
+
+            //    Target4Identification = 1234,
+            //    Target4Speed = 25,
+            //    Target4Altitude = 12.34f,
+            //    Target4Angle = -120.53f,
+            //    Target4EstimatedTimeOfArrival = -7.26f,
+
+            //    spare = new byte[180]
+            //};
+
+            var data = new Structs.PayloadBoard1
             {
-                var rng = new Random();
-                var payload = new Structs.PayloadBoard2
+                leds = new byte[137],
+                brightness = 0,
+                displays = new byte[] { 0, 1, 2, 3, 4 },
+                spare = new byte[240 - 137 - 1 - 5]
+            };
+
+            var dataBytes = Structs.StructToBytes(data);    
+
+            var payload = new Structs.PacketHeader
+            {
+                boardId = 1,
+                checksum = Structs.CalcChecksum(dataBytes, dataBytes.Length),
+                payload = dataBytes
+            };
+
+            using (SerialPort port = new SerialPort("COM3", 115200))
+            {
+                port.DtrEnable = false;  // Verhindert Auto-Reset des ESP32 beim Öffnen
+                port.RtsEnable = false;
+                port.Open();
+
+                port.DataReceived += (s, e) =>
                 {
-                    Target1Identification = 1234,
-                    Target1Speed = 25,
-                    Target1Altitude = 12.34f,
-                    Target1Angle = -120.53f,
-                    Target1EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
+                    SerialPort p = (SerialPort)s;
+                    int expectedSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Structs.AnswerBoard1));
 
-                    Target2Identification = 1234,
-                    Target2Speed = 25,
-                    Target2Altitude = 12.34f,
-                    Target2Angle = -120.53f,
-                    Target2EstimatedTimeOfArrival = -7.26f,
+                    while (p.IsOpen && p.BytesToRead > 0)
+                    {
+                        _receiveBuffer.Add((byte)p.ReadByte());
+                    }
 
-                    Target3Identification = 1234,
-                    Target3Speed = 25,
-                    Target3Altitude = 12.34f,
-                    Target3Angle = -120.53f,
-                    Target3EstimatedTimeOfArrival = -7.26f,
+                    if (_receiveBuffer.Count >= expectedSize)
+                    {
+                        byte[] answerBytes = _receiveBuffer.Take(expectedSize).ToArray();
+                        _receiveBuffer.RemoveRange(0, expectedSize);
 
-                    Target4Identification = 1234,
-                    Target4Speed = 25,
-                    Target4Altitude = 12.34f,
-                    Target4Angle = -120.53f,
-                    Target4EstimatedTimeOfArrival = -7.26f,
+                        //convert byte array to string
+                        //var answerString = Encoding.UTF8.GetString(_receiveBuffer.ToArray());
+                        //Debug.WriteLine($"Rohdaten empfangen: {answerString}");
 
-                    spare = new byte[180]
+                        var answer = Structs.BytesToStruct<Structs.AnswerBoard1>(answerBytes);
+                        Debug.WriteLine($"AnswerBoard1 empfangen: {answer.LoadButton}");
+                    }
                 };
 
-                //var payload = new Structs.PayloadBoard2
-                //{
-                //    Target1Identification = (short)rng.Next(1000, 9999),
-                //    Target1Speed = (byte)rng.Next(0, 255),
-                //    Target1Altitude = (float)(rng.NextDouble() * 10000),
-                //    Target1Angle = (float)(rng.NextDouble() * 360 - 180),
-                //    Target1EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
+                byte[] headerBytes = Structs.StructToBytes(payload);
+                port.Write(headerBytes, 0, headerBytes.Length);
 
-                //    Target2Identification = (short)rng.Next(1000, 9999),
-                //    Target2Speed = (byte)rng.Next(0, 255),
-                //    Target2Altitude = (float)(rng.NextDouble() * 10000),
-                //    Target2Angle = (float)(rng.NextDouble() * 360 - 180),
-                //    Target2EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
+                // Auf ACK-Byte (0xAC) warten – ESP32 sendet es nach Verarbeitung
+                port.ReadTimeout = 5000; // 5 Sekunden 
 
-                //    Target3Identification = (short)rng.Next(1000, 9999),
-                //    Target3Speed = (byte)rng.Next(0, 255),
-                //    Target3Altitude = (float)(rng.NextDouble() * 10000),
-                //    Target3Angle = (float)(rng.NextDouble() * 360 - 180),
-                //    Target3EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
-
-                //    Target4Identification = (short)rng.Next(1000, 9999),
-                //    Target4Speed = (byte)rng.Next(0, 255),
-                //    Target4Altitude = (float)(rng.NextDouble() * 10000),
-                //    Target4Angle = (float)(rng.NextDouble() * 360 - 180),
-                //    Target4EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
-
-                //    spare = new byte[180]
-                //};
-
-                using (SerialPort port = new SerialPort("COM5", 115200))
+                var startTime = DateTime.Now;
+                var endTime = startTime.AddSeconds(3).Ticks;
+                while (DateTime.Now.Ticks < endTime)
                 {
-                    port.DtrEnable = false;  // Verhindert Auto-Reset des ESP32 beim Öffnen
-                    port.RtsEnable = false;
-                    port.Open();
-                    byte[] headerBytes = Structs.StructToBytes(payload);
-                    port.Write(headerBytes, 0, headerBytes.Length);
-
-                    // Auf ACK-Byte (0xAC) warten – ESP32 sendet es nach Verarbeitung
-                    port.ReadTimeout = 5000; // 5 Sekunden Timeout
-                    bool ackReceived = false;
-                    try
-                    {
-                        int response = port.ReadByte();
-                        Debug.WriteLine(response);
-                        Debug.WriteLine((int)0xAC);
-                        ackReceived = (response == 0xAC);
-                    }
-                    catch (TimeoutException)
-                    {
-                        Debug.WriteLine("FEHLER: Kein ACK vom ESP32 empfangen (Timeout)");
-                    }
-
-                    if (ackReceived)
-                        Debug.WriteLine("ACK empfangen – ESP32 hat Daten verarbeitet.");
-                    else
-                        Debug.WriteLine("WARNUNG: Unerwartete Antwort vom ESP32.");
-
-                    port.Close();
+                    Thread.Sleep(100);
                 }
+
+                port.Close();
+                this.Invoke(new Action(() => {this.Close(); }));
             }
         }
+
+        // Puffer außerhalb des Handlers deklarieren (z.B. als Feld in der Klasse)
+        private readonly List<byte> _receiveBuffer = new List<byte>();
     }
 }
