@@ -63,6 +63,17 @@ namespace PVKK_Serial_Test
                 displays = new byte[] { 0, 1, 2, 3, 4 },
                 spare = new byte[240 - 137 - 1 - 5]
             };
+            for (int i = 0; i < 137; i++)
+            {
+                data.leds[i] = 1;
+            }
+            data.brightness = 10;
+
+            data.displays[0] = 100;
+            data.displays[1] = 200;
+            data.displays[2] = 150;
+            data.displays[3] = 250;
+            data.displays[4] = 50;
 
             var dataBytes = Structs.StructToBytes(data);    
 
@@ -95,8 +106,8 @@ namespace PVKK_Serial_Test
                         _receiveBuffer.RemoveRange(0, expectedSize);
 
                         //convert byte array to string
-                        //var answerString = Encoding.UTF8.GetString(_receiveBuffer.ToArray());
-                        //Debug.WriteLine($"Rohdaten empfangen: {answerString}");
+                        var answerString = Encoding.UTF8.GetString(_receiveBuffer.ToArray());
+                        Debug.WriteLine($"Rohdaten empfangen: {answerString}");
 
                         var answer = Structs.BytesToStruct<Structs.AnswerBoard1>(answerBytes);
                         Debug.WriteLine($"AnswerBoard1 empfangen: {answer.LoadButton}");
