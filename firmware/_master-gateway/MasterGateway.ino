@@ -2,12 +2,9 @@
 #include <SPI.h>
 
 #define CS_PIN_Board1_CenterUpper 5
-#define LED 2
 
 void setup() {
   Serial.begin(115200);
-
-  pinMode(LED,OUTPUT);
 
   SPI.begin();
   pinMode(CS_PIN_Board1_CenterUpper, OUTPUT);
@@ -40,16 +37,19 @@ void loop() {
   switch(packet.boardId)
   {
     case 1:
-      //SPI Send the full package to the Salve
-      // Here should be the received Serial Data
-      uint8_t sendData[sizeof(SerialPacket)];
+    {
+      //SPI Send the full package to the Slave
+      // DMA-Transfer muss ein Vielfaches von 4 Bytes sein!
+      const size_t TRANSFER_SIZE = (sizeof(SerialPacket) + 3) & ~3;  // = 244
+      uint8_t sendData[TRANSFER_SIZE];
+      memset(sendData, 0, TRANSFER_SIZE);         // Padding-Bytes auf 0
       memcpy(sendData, &packet, sizeof(SerialPacket));
-      uint8_t recvData[sizeof(AnswerBoard1)];
-      // recvData should be initialized with 0, so that unused bytes are 0 and not random data from memory
+
+      uint8_t recvData[TRANSFER_SIZE];
       memset(recvData, 0, sizeof(recvData));
 
       digitalWrite(CS_PIN_Board1_CenterUpper, LOW);
-      SPI.transferBytes(sendData, recvData, sizeof(SerialPacket));
+      SPI.transferBytes(sendData, recvData, TRANSFER_SIZE);
       digitalWrite(CS_PIN_Board1_CenterUpper, HIGH);
 
       //sending all received data from the slave to the serial monitor
@@ -57,6 +57,7 @@ void loop() {
         Serial.print(recvData[i]);
       Serial.println("");
       break;
+    }
     // case 2:
     //   delay(1);
     //   break;

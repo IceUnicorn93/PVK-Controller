@@ -1,5 +1,5 @@
-const uint8_t PayloadSize = 240;
-const uint8_t AnswerSize = 242;
+const uint8_t PayloadSize = 242;
+const uint8_t AnswerSize = 244;
 
 /*
 Payload for Boards

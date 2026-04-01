@@ -44,8 +44,8 @@ namespace PVKK_Serial_Test
         }
 
 
-        const byte PayloadSize = 240;
-        const byte AnswerSize = 242;
+        const byte PayloadSize = 242;
+        const byte AnswerSize = 244;
 
         /*
         Payload for Boards

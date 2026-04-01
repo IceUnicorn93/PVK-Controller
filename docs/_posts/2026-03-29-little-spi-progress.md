@@ -17,7 +17,7 @@ That explains why my 242-byte structs were arriving as garbage. The library was 
 
 ### A Working SPI Test
 
-With the root cause identified, I built a **simple SPI transmission example** from scratch to validate the fix. The good news: it works. Data goes from master to slave and arrives correctly on the other side.
+With the root cause identified, I built a **simple SPI transmission example** from scratch to validate the fix. The good news: it works. Data goes from master to slave and seems to arrive correctly on the other side.
 
 However, integrating this back into the actual firmware hasn't gone smoothly yet. I tested around with folding the working example into the real codebase, but didn't get very far. There's clearly more work needed to bridge the gap between "simple test works" and "full integration works." More details on that struggle in the next update.
 

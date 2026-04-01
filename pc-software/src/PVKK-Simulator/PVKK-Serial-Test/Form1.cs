@@ -59,9 +59,9 @@ namespace PVKK_Serial_Test
             var data = new Structs.PayloadBoard1
             {
                 leds = new byte[137],
-                brightness = 0,
-                displays = new byte[] { 0, 1, 2, 3, 4 },
-                spare = new byte[240 - 137 - 1 - 5]
+                brightness = 50,
+                displays = new byte[] { 1, 2, 3, 4, 5 },
+                spare = new byte[242 - 137 - 1 - 5]
             };
             for (int i = 0; i < 137; i++)
             {

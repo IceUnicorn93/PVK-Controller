@@ -1,7 +1,19 @@
-#include <ESP32SPISlave.h>
 #include <../shared/protocol.h>
+#include <driver/spi_slave.h>
 
-ESP32SPISlave slave;
+// ── SPI Configuration ──────────────────────────────────────────────
+// DMA-Transfer muss ein Vielfaches von 4 Bytes sein!
+static constexpr size_t BUFFER_SIZE = (242 + 3) & ~3;  // = 244
+
+// SPI-Pins (HSPI)
+static constexpr int PIN_MOSI = 23;
+static constexpr int PIN_MISO = 19;
+static constexpr int PIN_SCLK = 18;
+static constexpr int PIN_CS   = 5;
+
+// DMA-fähige Puffer (müssen WORD-aligned sein)
+WORD_ALIGNED_ATTR uint8_t rxBuffer[BUFFER_SIZE] = {};
+WORD_ALIGNED_ATTR uint8_t txBuffer[BUFFER_SIZE] = {};
 
 //--------------------------------------------------------------------------------
 // Displays and I2C Multiplexer
@@ -94,11 +106,11 @@ void handleData(AnswerBoard1* response) {
 // Neo Pixels
 //--------------------------------------------------------------------------------
 
-#include <Adafruit_NeoPixel.h>
-#define PIN            1
+// #include <Adafruit_NeoPixel.h>
+// #define PIN            1
 #define NUMPIXELS      137
-// 
-Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+
+// Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 const int ledColors_1[NUMPIXELS]
 {
@@ -382,13 +394,9 @@ const int ledColors_2[NUMPIXELS]
   16755001  // Energy 1
 };
 
-static constexpr size_t BUFFER_SIZE = sizeof(AnswerSize);
-uint8_t rxBuffer[BUFFER_SIZE];
-uint8_t txBuffer[BUFFER_SIZE]; //= {'W', 'E', 'L', 'T', '!', 0x00};
-
 void setup() {
-  pixels.setPixelColor(0, 255, 0, 0);
-  pixels.show();
+  // pixels.setPixelColor(0, 255, 0, 0);
+  // pixels.show();
 
   // Set Button Pins
   pinMode(analogePin, INPUT);
@@ -416,12 +424,37 @@ void setup() {
   SetupDisplay(u8g2_4, 3);
   SetupDisplay(u8g2_5, 4);
 
-  slave.setDataMode(SPI_MODE0);
-  slave.setQueueSize(1);
-  slave.begin(VSPI);
 
-  pixels.setPixelColor(0, 0, 255, 0);
-  pixels.show();
+//SPI
+  // CS-Pin als Input konfigurieren
+  pinMode(PIN_CS, INPUT);
+
+  // SPI-Bus-Konfiguration
+  spi_bus_config_t busConfig = {};
+  busConfig.mosi_io_num   = PIN_MOSI;
+  busConfig.miso_io_num   = PIN_MISO;
+  busConfig.sclk_io_num   = PIN_SCLK;
+  busConfig.quadwp_io_num = -1;
+  busConfig.quadhd_io_num = -1;
+
+  // Slave-Interface-Konfiguration
+  spi_slave_interface_config_t slaveConfig = {};
+  slaveConfig.mode          = 0;           // SPI-Mode 0 – muss mit Master übereinstimmen (MISO-Versatz bei 1 MHz vernachlässigbar)
+  slaveConfig.spics_io_num  = PIN_CS;
+  slaveConfig.queue_size    = 1;
+  slaveConfig.flags         = 0;
+
+  // SPI-Slave initialisieren (HSPI = SPI2_HOST)
+  esp_err_t ret = spi_slave_initialize(SPI2_HOST, &busConfig, &slaveConfig, SPI_DMA_CH_AUTO);
+  if (ret != ESP_OK) {
+      //Serial.printf("SPI-Slave Init fehlgeschlagen: %s\n", esp_err_to_name(ret));
+      while (true) { delay(1000); }
+  }
+
+  SetDisplayData(u8g2, 0, "10");
+
+  // pixels.setPixelColor(0, 0, 255, 0);
+  // pixels.show();
 }
 
 void loop() {
@@ -429,25 +462,49 @@ void loop() {
   handleData(&response);
   memcpy(txBuffer, &response, sizeof(AnswerBoard1));
 
-  // Blocking transfer: wartet bis Master Daten sendet
-  size_t received = slave.transfer(txBuffer, rxBuffer, BUFFER_SIZE);
+  // RX-Puffer mit Marker füllen – damit erkennen wir ob DMA geschrieben hat
+  memset(rxBuffer, 0xAA, BUFFER_SIZE);
 
-  SetDisplayData(u8g2, 0, String(received).c_str());
-  delay(10000);
-  if (received == sizeof(SerialPacket))
+  // Transaktion vorbereiten
+  spi_slave_transaction_t transaction = {};
+  transaction.length    = BUFFER_SIZE * 8;   // Länge in Bits
+  transaction.rx_buffer = rxBuffer;
+  transaction.tx_buffer = txBuffer;
+
+  // Blockierend auf eine Übertragung vom Master warten
+  esp_err_t ret = spi_slave_transmit(SPI2_HOST, &transaction, portMAX_DELAY);
+
+  if (ret == ESP_OK)
   {
-    pixels.setPixelColor(0, 0, 0, 255);
+    // Diagnostik: tatsächlich empfangene Bytes (trans_len ist in Bits)
+    SetDisplayData(u8g2_3, 2, String(transaction.trans_len / 8).c_str());
 
-    // //cast recieved Data into SerialPackage
-    // SerialPacket packet;
-    // memcpy(&packet, rxBuffer, sizeof(SerialPacket));
+    // Diagnostik: Wie viele Bytes hat DMA tatsächlich geschrieben? (nicht mehr 0xAA)
+    int dmaWritten = 0;
+    for (int i = 0; i < 242; i++)
+      if (rxBuffer[i] != 0xAA) dmaWritten++;
+    SetDisplayData(u8g2_4, 3, String(dmaWritten).c_str());
 
-    // //check if checksum is correct (based on payload)
-    // if(packet.checksum == calcChecksum(packet.payload, PayloadSize))
-    // {
-    //   // cast payload into PayloadBoard1
-    //   PayloadBoard1 payload;
-    //   memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
+    SetDisplayData(u8g2, 0, "20");
+
+    // Cast received Data into SerialPacket
+    SerialPacket packet;
+    memcpy(&packet, rxBuffer, sizeof(SerialPacket));
+
+    // Checksum prüfen – aber auch sicherstellen dass nicht alles Null ist (Falsch-Positiv)
+    if(packet.checksum == calcChecksum(packet.payload, PayloadSize) && dmaWritten > 0)
+    {
+      SetDisplayData(u8g2, 0, "30");
+
+      // cast payload into PayloadBoard1
+      PayloadBoard1 payload;
+      memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
+
+      int counter = 0;
+      for(int i = 0; i < 242; i++)
+        if(rxBuffer[i] != 0) counter++;
+
+      SetDisplayData(u8g2_2, 1, String(counter).c_str());
 
     //   for(int i = 0; i < NUMPIXELS; i++)
     //     if(payload.leds[i] == 0) pixels.setPixelColor(i, 0);
@@ -486,7 +543,7 @@ void loop() {
     //     SetDisplayData(u8g2_5, 4, String(payload.displays[4]).c_str());
     //     lastLaser = payload.displays[4];
     //   }
-    //}
+    }
   }
 }
 
