@@ -1,6 +1,6 @@
-//#include <SPI.h>
+#include <SPI.h>
 #include <driver/spi_slave.h>
-//#include <driver/gpio.h>
+#include <driver/gpio.h>
 
 // SLAVE
 

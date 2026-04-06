@@ -19,43 +19,16 @@ namespace PVKK_Serial_Test
         {
             InitializeComponent();
 
-            var t = new Task(() => SendDataToESP32());
+            var t = new Task(async () =>
+            {
+                await SendDataToESP32();
+            });
             t.Start();
             
         }
 
-        private void SendDataToESP32()
+        private async Task SendDataToESP32()
         {
-            var rng = new Random();
-            //var payload = new Structs.PayloadBoard2
-            //{
-            //    Target1Identification = 1234,
-            //    Target1Speed = 25,
-            //    Target1Altitude = 12.34f,
-            //    Target1Angle = -120.53f,
-            //    Target1EstimatedTimeOfArrival = (float)(rng.NextDouble() * 60),
-
-            //    Target2Identification = 1234,
-            //    Target2Speed = 25,
-            //    Target2Altitude = 12.34f,
-            //    Target2Angle = -120.53f,
-            //    Target2EstimatedTimeOfArrival = -7.26f,
-
-            //    Target3Identification = 1234,
-            //    Target3Speed = 25,
-            //    Target3Altitude = 12.34f,
-            //    Target3Angle = -120.53f,
-            //    Target3EstimatedTimeOfArrival = -7.26f,
-
-            //    Target4Identification = 1234,
-            //    Target4Speed = 25,
-            //    Target4Altitude = 12.34f,
-            //    Target4Angle = -120.53f,
-            //    Target4EstimatedTimeOfArrival = -7.26f,
-
-            //    spare = new byte[180]
-            //};
-
             var data = new Structs.PayloadBoard1
             {
                 leds = new byte[137],
@@ -64,16 +37,15 @@ namespace PVKK_Serial_Test
                 spare = new byte[242 - 137 - 1 - 5]
             };
             for (int i = 0; i < 137; i++)
-            {
-                data.leds[i] = 1;
-            }
+                data.leds[i] = 0;
+
             data.brightness = 10;
 
-            data.displays[0] = 100;
-            data.displays[1] = 200;
-            data.displays[2] = 150;
-            data.displays[3] = 250;
-            data.displays[4] = 50;
+            data.displays[0] = 1;
+            data.displays[1] = 0;
+            data.displays[2] = 0;
+            data.displays[3] = 0;
+            data.displays[4] = 0;
 
             var dataBytes = Structs.StructToBytes(data);    
 
@@ -88,12 +60,18 @@ namespace PVKK_Serial_Test
             {
                 port.DtrEnable = false;  // Verhindert Auto-Reset des ESP32 beim Öffnen
                 port.RtsEnable = false;
+
+                // Auf ACK-Byte (0xAC) warten – ESP32 sendet es nach Verarbeitung
+                port.ReadTimeout = 5000; // 5 Sekunden 
+
                 port.Open();
+
+                var hasReceived = false;
 
                 port.DataReceived += (s, e) =>
                 {
                     SerialPort p = (SerialPort)s;
-                    int expectedSize = System.Runtime.InteropServices.Marshal.SizeOf(typeof(Structs.AnswerBoard1));
+                    int expectedSize = 244; //System.Runtime.InteropServices.Marshal.SizeOf(typeof(Structs.AnswerBoard1));
 
                     while (p.IsOpen && p.BytesToRead > 0)
                     {
@@ -102,33 +80,89 @@ namespace PVKK_Serial_Test
 
                     if (_receiveBuffer.Count >= expectedSize)
                     {
+
                         byte[] answerBytes = _receiveBuffer.Take(expectedSize).ToArray();
                         _receiveBuffer.RemoveRange(0, expectedSize);
 
                         //convert byte array to string
-                        var answerString = Encoding.UTF8.GetString(_receiveBuffer.ToArray());
-                        Debug.WriteLine($"Rohdaten empfangen: {answerString}");
+                        //var answerString = Encoding.UTF8.GetString(answerBytes.ToArray());
+                        //Debug.WriteLine($"Rohdaten empfangen: {answerString}");
 
-                        var answer = Structs.BytesToStruct<Structs.AnswerBoard1>(answerBytes);
-                        Debug.WriteLine($"AnswerBoard1 empfangen: {answer.LoadButton}");
+
+                        //var answer = Structs.BytesToStruct<Structs.AnswerBoard1>(answerBytes);
+                        //Debug.WriteLine($"AnswerBoard1 empfangen: {answer.LoadButton}");
+                        //label1.Invoke(new Action(() =>
+                        //{
+                        //    label1.Text = $"Ammo: {answer.AmmoSelection}," +
+                        //    $"Load: {answer.LoadButton}," +
+                        //    $"Prime1: {answer.Prime1Button}," +
+                        //    $"Prime2: {answer.Prime2Button}," +
+                        //    $"Prime3: {answer.Prime3Button}";
+                        //}) );
+
+
+                        hasReceived = true;
                     }
                 };
 
-                byte[] headerBytes = Structs.StructToBytes(payload);
-                port.Write(headerBytes, 0, headerBytes.Length);
-
-                // Auf ACK-Byte (0xAC) warten – ESP32 sendet es nach Verarbeitung
-                port.ReadTimeout = 5000; // 5 Sekunden 
-
-                var startTime = DateTime.Now;
-                var endTime = startTime.AddSeconds(3).Ticks;
-                while (DateTime.Now.Ticks < endTime)
+                int counter = 0;
+                while (port.IsOpen)
                 {
-                    Thread.Sleep(100);
+                    data.leds[counter] = 1;
+                    counter++;
+
+                    if(counter >= 137)
+                    {
+                        data.leds = new byte[137];
+                        data.displays[1] += 1;
+                        counter = 0;
+                    }
+                    if (data.displays[1] == 255)
+                    {
+                        data.displays[1] = 0;
+                        data.displays[2] += 1;
+                    }
+                    if (data.displays[2] == 255)
+                    {
+                        data.displays[2] = 0;
+                        data.displays[3] += 1;
+                    }
+                    if (data.displays[3] == 255)
+                    {
+                        data.displays[3] = 0;
+                        data.displays[4] += 1;
+                    }
+
+                    dataBytes = Structs.StructToBytes(data);
+
+
+                    payload = new Structs.PacketHeader
+                    {
+                        boardId = 1,
+                        checksum = Structs.CalcChecksum(dataBytes, dataBytes.Length),
+                        payload = dataBytes
+                    };
+
+                    byte[] headerBytes = Structs.StructToBytes(payload);
+                    hasReceived = false;
+                    port.Write(headerBytes, 0, headerBytes.Length);
+
+                    // Warten bis eine komplette Antwort empfangen wurde (max. 5 Sekunden)
+                    var timeout = Stopwatch.StartNew();
+                    while (!hasReceived && timeout.ElapsedMilliseconds < 5000)
+                    {
+                        await Task.Delay(1);
+                    }
+
+                    if (!hasReceived)
+                    {
+                        Debug.WriteLine("Timeout: Keine Antwort vom ESP32 erhalten.");
+                    }
+
+                    await Task.Delay(10); // Kurze Verzögerung, um CPU-Last zu reduzieren
                 }
 
                 port.Close();
-                this.Invoke(new Action(() => {this.Close(); }));
             }
         }
 

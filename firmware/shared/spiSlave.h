@@ -2,9 +2,9 @@
 // SLAVE //
 //-------//
 
-//#include <SPI.h>
+#include <SPI.h>
 #include <driver/spi_slave.h>
-//#include <driver/gpio.h>
+#include <driver/gpio.h>
 
 // Pin-Konfiguration
 // Sichere Pins für ESP32 DevKit C V4
@@ -16,7 +16,7 @@
 
 
 #define RCV_HOST        SPI2_HOST
-#define BUF_SIZE        129
+#define BUF_SIZE        (244 + 1)
 
 // Callbacks für Handshake-Leitung
 void IRAM_ATTR my_post_setup_cb(spi_slave_transaction_t *trans) {
@@ -77,42 +77,39 @@ void DoSpiSetup()
         Serial.println("DMA Buffer Allokierung fehlgeschlagen!");
         while (1) { delay(1000); }
     }
+
+    //Serial.println("SPI Slave bereit.");
 }
 
-spi_slave_transaction_t DoSpiTransmissionPrepparation()
+void DoSpiTransmission()
 {
-	// Buffer vorbereiten
-    memset(recvbuf, 0xA5, BUF_SIZE);
-    snprintf(sendbuf, BUF_SIZE, "This is the receiver, sending data for transmission number %04d.", n);
+	// buffer vorbereiten
+    memset(recvbuf, 0xa5, BUF_SIZE);
+    snprintf(sendbuf, BUF_SIZE, "Die Sonne geht langsam hinter den Bergen unter. Ein sanfter, kühler Wind streicht durch die Bäume und trägt den Duft von frisch gemähtem Gras mit sich. Ein Hund bellt kurz in der Ferne, während die ganze weite Welt nach und zur Ruhe kommt.");
 
     // Transaktion konfigurieren
     spi_slave_transaction_t t = {};
-    t.length = 128 * 8;
+    t.length = 244 * 8;
     t.tx_buffer = sendbuf;
     t.rx_buffer = recvbuf;
 	
-	return t;
-}
-
-void DoSpiTransmission(spi_slave_transaction_t t)
-{
 	// Auf Master-Transaktion warten (blockiert bis Daten empfangen)
     esp_err_t ret = spi_slave_transmit(RCV_HOST, &t, portMAX_DELAY);
     if (ret == ESP_OK) {
-        Serial.printf("Received: %s\n", recvbuf);
+        //Serial.printf("Received: %s\n", recvbuf);
     }
 
     // Slave pausieren zum Stromsparen
     ret = spi_slave_disable(RCV_HOST);
     if (ret == ESP_OK) {
-        Serial.println("slave paused ...");
+        //Serial.println("slave paused ...");
     }
 
-    delay(1);
+    delay(5);
 
     ret = spi_slave_enable(RCV_HOST);
     if (ret == ESP_OK) {
-        Serial.println("slave ready !");
+        //Serial.println("slave ready !");
     }
 
     n++;

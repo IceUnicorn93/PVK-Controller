@@ -7,3 +7,4 @@ E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\D
 E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\PVKK-Serial-Test.pdb
 E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.exe
 E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.pdb
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK_Serial_Test.Form1.resources

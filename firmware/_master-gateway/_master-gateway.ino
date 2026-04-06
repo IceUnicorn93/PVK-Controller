@@ -1,23 +1,16 @@
-#include "..\..\shared\protocol.h"
-#include <SPI.h>
-
-#define CS_PIN_Board1_CenterUpper 5
+#include "..\shared\protocol.h"
+#include "..\shared\spiMaster.h"
 
 void setup() {
   Serial.begin(115200);
 
-  SPI.begin();
-  pinMode(CS_PIN_Board1_CenterUpper, OUTPUT);
-  digitalWrite(CS_PIN_Board1_CenterUpper, HIGH);
-  
-  // SPI Einstellungen
-  SPI.setFrequency(1000000);  // 1 MHz, langsam für Stabilität
-  SPI.setDataMode(SPI_MODE0);
+  DoSpiSetup();
 
   delay(2000);
 }
 
 void loop() {
+
   // Wait until Serial has recevied a SerialPacket
   while (Serial.available() < sizeof(SerialPacket))
     delay(10);
@@ -37,25 +30,18 @@ void loop() {
   switch(packet.boardId)
   {
     case 1:
-    {
-      //SPI Send the full package to the Slave
-      // DMA-Transfer muss ein Vielfaches von 4 Bytes sein!
-      const size_t TRANSFER_SIZE = (sizeof(SerialPacket) + 3) & ~3;  // = 244
-      uint8_t sendData[TRANSFER_SIZE];
-      memset(sendData, 0, TRANSFER_SIZE);         // Padding-Bytes auf 0
-      memcpy(sendData, &packet, sizeof(SerialPacket));
+    {      
+      memset(sendbuf, 0, sizeof(SerialPacket));
+      memcpy(sendbuf, &packet, sizeof(SerialPacket));
 
-      uint8_t recvData[TRANSFER_SIZE];
-      memset(recvData, 0, sizeof(recvData));
-
-      digitalWrite(CS_PIN_Board1_CenterUpper, LOW);
-      SPI.transferBytes(sendData, recvData, TRANSFER_SIZE);
-      digitalWrite(CS_PIN_Board1_CenterUpper, HIGH);
+      DoSpiTransmission();
 
       //sending all received data from the slave to the serial monitor
-      for(int i = 0; i < sizeof(AnswerBoard1); i++)
-        Serial.print(recvData[i]);
-      Serial.println("");
+      // for(int i = 0; i < sizeof(AnswerBoard1); i++)
+      //   Serial.print(recvbuf[i]);
+      // Serial.println("");
+
+      // Serial.write(recvbuf, 244);
       break;
     }
     // case 2:
@@ -74,5 +60,4 @@ void loop() {
     //   delay(1);
     //   break;
   }
-
 }

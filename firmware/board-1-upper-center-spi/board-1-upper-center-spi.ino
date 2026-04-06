@@ -1,19 +1,8 @@
 #include <../shared/protocol.h>
-#include <driver/spi_slave.h>
-
-// ── SPI Configuration ──────────────────────────────────────────────
-// DMA-Transfer muss ein Vielfaches von 4 Bytes sein!
-static constexpr size_t BUFFER_SIZE = (242 + 3) & ~3;  // = 244
-
-// SPI-Pins (HSPI)
-static constexpr int PIN_MOSI = 23;
-static constexpr int PIN_MISO = 19;
-static constexpr int PIN_SCLK = 18;
-static constexpr int PIN_CS   = 5;
-
-// DMA-fähige Puffer (müssen WORD-aligned sein)
-WORD_ALIGNED_ATTR uint8_t rxBuffer[BUFFER_SIZE] = {};
-WORD_ALIGNED_ATTR uint8_t txBuffer[BUFFER_SIZE] = {};
+//--------------------------------------------------------------------------------
+// SPI Slave
+//--------------------------------------------------------------------------------
+#include "..\shared\spiSlave.h"
 
 //--------------------------------------------------------------------------------
 // Displays and I2C Multiplexer
@@ -21,6 +10,7 @@ WORD_ALIGNED_ATTR uint8_t txBuffer[BUFFER_SIZE] = {};
 #include <Wire.h>
 #include "TCA9548A.h"
 #include <U8g2lib.h>
+#include <../shared/14SegFont.h>
 
 TCA9548A I2CMux;
 U8G2_SH1106_128X64_NONAME_F_HW_I2C u8g2(U8G2_R2, U8X8_PIN_NONE);
@@ -41,8 +31,15 @@ static inline void selectMuxChannel(uint8_t channel)
 void SetDisplayData(U8G2 &display, uint8_t channel, const char *data)
 {
   selectMuxChannel(channel);
+  int length = strlen(data); // Length of String, "A" => 1; "AB" => 2; "ABC" => 3, etc.
+  int size = 27 * length;
+  int fullSizeMinusSize = 128 - size;
+  int pos = fullSizeMinusSize / 2;
   display.clearBuffer();
-  display.drawStr(38, 53, data); // 0 Left | 64 (Display Hight) - 42 (Font Height) => 22 / 2 = 11 -> 42 + 11 = 53
+  display.drawStr(pos, 53, data);
+  //display.drawStr(38, 53, data); // 0 Left
+  //38 => | 26 (Font Width) * 2 => 52 | 128 (Display Width) - 52 => 76 -> 76 / 2 = 38 (For 2 Digits)
+  //53 => | 64 (Display Hight) - 42 (Font Height) => 22 / 2 = 11 -> 42 + 11 = 53
   display.sendBuffer();
 }
 
@@ -50,7 +47,8 @@ void SetupDisplay(U8G2 &display, uint8_t channel)
 {
   selectMuxChannel(channel);
   display.begin();
-  display.setFont(u8g2_font_7Segments_26x42_mn);
+  //display.setFont(u8g2_font_7Segments_26x42_mn);
+  display.setFont(MySegmentFont46px);
 }
 
 uint8_t lastAmmo = 0;
@@ -106,11 +104,11 @@ void handleData(AnswerBoard1* response) {
 // Neo Pixels
 //--------------------------------------------------------------------------------
 
-// #include <Adafruit_NeoPixel.h>
-// #define PIN            1
+#include <Adafruit_NeoPixel.h>
+#define PIN            17
 #define NUMPIXELS      137
 
-// Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
+Adafruit_NeoPixel pixels = Adafruit_NeoPixel(NUMPIXELS, PIN, NEO_GRB + NEO_KHZ800);
 
 const int ledColors_1[NUMPIXELS]
 {
@@ -395,8 +393,11 @@ const int ledColors_2[NUMPIXELS]
 };
 
 void setup() {
-  // pixels.setPixelColor(0, 255, 0, 0);
-  // pixels.show();
+  Serial.begin(115200);
+
+  pixels.setBrightness(10);
+  pixels.setPixelColor(0, 255, 0, 0);
+  pixels.show();
 
   // Set Button Pins
   pinMode(analogePin, INPUT);
@@ -413,7 +414,7 @@ void setup() {
   // Setup I2C, Multiplexer (Mux) and Displays
   Wire.begin();
   // optional faster: 400kHz if Display+Mux can do it, needs testing
-  //Wire.setClock(100000);
+  Wire.setClock(100000);
 
   I2CMux.begin(Wire);
   I2CMux.closeAll();
@@ -424,125 +425,67 @@ void setup() {
   SetupDisplay(u8g2_4, 3);
   SetupDisplay(u8g2_5, 4);
 
+  DoSpiSetup();
 
-//SPI
-  // CS-Pin als Input konfigurieren
-  pinMode(PIN_CS, INPUT);
-
-  // SPI-Bus-Konfiguration
-  spi_bus_config_t busConfig = {};
-  busConfig.mosi_io_num   = PIN_MOSI;
-  busConfig.miso_io_num   = PIN_MISO;
-  busConfig.sclk_io_num   = PIN_SCLK;
-  busConfig.quadwp_io_num = -1;
-  busConfig.quadhd_io_num = -1;
-
-  // Slave-Interface-Konfiguration
-  spi_slave_interface_config_t slaveConfig = {};
-  slaveConfig.mode          = 0;           // SPI-Mode 0 – muss mit Master übereinstimmen (MISO-Versatz bei 1 MHz vernachlässigbar)
-  slaveConfig.spics_io_num  = PIN_CS;
-  slaveConfig.queue_size    = 1;
-  slaveConfig.flags         = 0;
-
-  // SPI-Slave initialisieren (HSPI = SPI2_HOST)
-  esp_err_t ret = spi_slave_initialize(SPI2_HOST, &busConfig, &slaveConfig, SPI_DMA_CH_AUTO);
-  if (ret != ESP_OK) {
-      //Serial.printf("SPI-Slave Init fehlgeschlagen: %s\n", esp_err_to_name(ret));
-      while (true) { delay(1000); }
-  }
-
-  SetDisplayData(u8g2, 0, "10");
-
-  // pixels.setPixelColor(0, 0, 255, 0);
-  // pixels.show();
+  pixels.setPixelColor(0, 0, 255, 0);
+  pixels.show();
 }
 
-void loop() {
+void loop()
+{
   AnswerBoard1 response;
   handleData(&response);
-  memcpy(txBuffer, &response, sizeof(AnswerBoard1));
+  memcpy(sendbuf, &response, sizeof(AnswerBoard1));
 
-  // RX-Puffer mit Marker füllen – damit erkennen wir ob DMA geschrieben hat
-  memset(rxBuffer, 0xAA, BUFFER_SIZE);
+  DoSpiTransmission();
 
-  // Transaktion vorbereiten
-  spi_slave_transaction_t transaction = {};
-  transaction.length    = BUFFER_SIZE * 8;   // Länge in Bits
-  transaction.rx_buffer = rxBuffer;
-  transaction.tx_buffer = txBuffer;
+  // Cast received Data into SerialPacket
+  SerialPacket packet; 
+  memcpy(&packet, recvbuf, sizeof(SerialPacket));
 
-  // Blockierend auf eine Übertragung vom Master warten
-  esp_err_t ret = spi_slave_transmit(SPI2_HOST, &transaction, portMAX_DELAY);
-
-  if (ret == ESP_OK)
+  // Checksum prüfen – aber auch sicherstellen dass nicht alles Null ist (Falsch-Positiv)
+  if(packet.checksum == calcChecksum(packet.payload, PayloadSize))
   {
-    // Diagnostik: tatsächlich empfangene Bytes (trans_len ist in Bits)
-    SetDisplayData(u8g2_3, 2, String(transaction.trans_len / 8).c_str());
+    // cast payload into PayloadBoard1
+    PayloadBoard1 payload;
+    memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
 
-    // Diagnostik: Wie viele Bytes hat DMA tatsächlich geschrieben? (nicht mehr 0xAA)
-    int dmaWritten = 0;
-    for (int i = 0; i < 242; i++)
-      if (rxBuffer[i] != 0xAA) dmaWritten++;
-    SetDisplayData(u8g2_4, 3, String(dmaWritten).c_str());
+    for(int i = 0; i < NUMPIXELS; i++)
+      if(payload.leds[i] == 0) pixels.setPixelColor(i, 0);
+      else if(payload.leds[i] == 1) pixels.setPixelColor(i, ledColors_1[i]);
+      else  if(payload.leds[i] == 2) pixels.setPixelColor(i, ledColors_2[i]);
+    
+    pixels.setBrightness(payload.brightness);
+    pixels.show();
 
-    SetDisplayData(u8g2, 0, "20");
-
-    // Cast received Data into SerialPacket
-    SerialPacket packet;
-    memcpy(&packet, rxBuffer, sizeof(SerialPacket));
-
-    // Checksum prüfen – aber auch sicherstellen dass nicht alles Null ist (Falsch-Positiv)
-    if(packet.checksum == calcChecksum(packet.payload, PayloadSize) && dmaWritten > 0)
+    if(lastAmmo != payload.displays[0])
     {
-      SetDisplayData(u8g2, 0, "30");
-
-      // cast payload into PayloadBoard1
-      PayloadBoard1 payload;
-      memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
-
-      int counter = 0;
-      for(int i = 0; i < 242; i++)
-        if(rxBuffer[i] != 0) counter++;
-
-      SetDisplayData(u8g2_2, 1, String(counter).c_str());
-
-    //   for(int i = 0; i < NUMPIXELS; i++)
-    //     if(payload.leds[i] == 0) pixels.setPixelColor(i, 0);
-    //     else if(payload.leds[i] == 1) pixels.setPixelColor(i, ledColors_1[i]);
-    //     else  if(payload.leds[i] == 2) pixels.setPixelColor(i, ledColors_2[i]);
-      
-    //   pixels.setBrightness(payload.brightness);
-    //   pixels.show();
-
-    //   if(lastAmmo != payload.displays[0])
-    //   {
-    //     if (payload.displays[0] == 0) SetDisplayData(u8g2, 0, "");
-    //     else if (payload.displays[0] == 1) SetDisplayData(u8g2, 0, "KWG");
-    //     else if (payload.displays[0] == 2) SetDisplayData(u8g2, 0, "PGM");
-    //     else if (payload.displays[0] == 3) SetDisplayData(u8g2, 0, "HE");
-    //     else if (payload.displays[0] == 4) SetDisplayData(u8g2, 0, "Laser");
-    //     lastAmmo = payload.displays[0];
-    //   }
-    //   if(lastKWG != payload.displays[1])
-    //   {
-    //     SetDisplayData(u8g2_2, 1, String(payload.displays[1]).c_str());
-    //     lastKWG = payload.displays[1];
-    //   }
-    //   if(lastPGM != payload.displays[2])
-    //   {
-    //     SetDisplayData(u8g2_3, 2, String(payload.displays[2]).c_str());
-    //     lastPGM = payload.displays[2];
-    //   }
-    //   if(lastHE != payload.displays[3])
-    //   {
-    //     SetDisplayData(u8g2_4, 3, String(payload.displays[3]).c_str());
-    //     lastHE = payload.displays[3];
-    //   }
-    //   if(lastLaser != payload.displays[4])
-    //   {
-    //     SetDisplayData(u8g2_5, 4, String(payload.displays[4]).c_str());
-    //     lastLaser = payload.displays[4];
-    //   }
+      if (payload.displays[0] == 0) SetDisplayData(u8g2, 0, "");
+      else if (payload.displays[0] == 1) SetDisplayData(u8g2, 0, "KWG");
+      else if (payload.displays[0] == 2) SetDisplayData(u8g2, 0, "PGM");
+      else if (payload.displays[0] == 3) SetDisplayData(u8g2, 0, "HE");
+      else if (payload.displays[0] == 4) SetDisplayData(u8g2, 0, "Laser");
+      lastAmmo = payload.displays[0];
+    }
+    if(lastKWG != payload.displays[1])
+    {
+      SetDisplayData(u8g2_2, 1, String(payload.displays[1]).c_str());
+      lastKWG = payload.displays[1];
+    }
+    if(lastPGM != payload.displays[2])
+    {
+      SetDisplayData(u8g2_3, 2, String(payload.displays[2]).c_str());
+      lastPGM = payload.displays[2];
+    }
+    if(lastHE != payload.displays[3])
+    {
+      SetDisplayData(u8g2_4, 3, String(payload.displays[3]).c_str());
+      lastHE = payload.displays[3];
+    }
+    if(lastLaser != payload.displays[4])
+    {
+      SetDisplayData(u8g2_5, 4, String(payload.displays[4]).c_str());
+      lastLaser = payload.displays[4];
     }
   }
 }

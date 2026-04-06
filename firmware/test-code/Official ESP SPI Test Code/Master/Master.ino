@@ -1,7 +1,7 @@
-//#include <SPI.h>
+#include <SPI.h>
 #include <driver/spi_master.h>
-//#include <driver/gpio.h>
-//#include <esp_timer.h>
+#include <driver/gpio.h>
+#include <esp_timer.h>
 
 // Pin-Konfiguration
 // Sichere Pins für ESP32 DevKit C V4
@@ -36,8 +36,8 @@ static void IRAM_ATTR gpio_handshake_isr_handler(void *arg) {
 
 spi_device_handle_t handle;
 int n = 0;
-char sendbuf[128] = {0};
-char recvbuf[128] = {0};
+char sendbuf[244] = {0};
+char recvbuf[244] = {0};
 
 void setup() {
     Serial.begin(115200);
@@ -70,7 +70,7 @@ void setup() {
     devcfg.command_bits = 0;
     devcfg.address_bits = 0;
     devcfg.dummy_bits = 0;
-    devcfg.clock_speed_hz = 5000000;
+    devcfg.clock_speed_hz = 3 * 1000 * 1000;
     devcfg.duty_cycle_pos = 128;        // 50% Duty Cycle
     devcfg.mode = 0;
     devcfg.spics_io_num = GPIO_CS;

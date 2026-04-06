@@ -2,10 +2,10 @@
 // MASTER //
 //--------//
 
-//#include <SPI.h>
+#include <SPI.h>
 #include <driver/spi_master.h>
-//#include <driver/gpio.h>
-//#include <esp_timer.h>
+#include <driver/gpio.h>
+#include <esp_timer.h>
 
 // Pin-Konfiguration
 // Sichere Pins für ESP32 DevKit C V4
@@ -40,8 +40,8 @@ static void IRAM_ATTR gpio_handshake_isr_handler(void *arg) {
 
 spi_device_handle_t handle;
 int n = 0;
-char sendbuf[128] = {0};
-char recvbuf[128] = {0};
+char sendbuf[244] = {0};
+char recvbuf[244] = {0};
 
 void DoSpiSetup()
 {
@@ -73,7 +73,7 @@ void DoSpiSetup()
     devcfg.command_bits = 0;
     devcfg.address_bits = 0;
     devcfg.dummy_bits = 0;
-    devcfg.clock_speed_hz = 5000000;
+    devcfg.clock_speed_hz = 3 * 1000 * 1000; // 3MHz
     devcfg.duty_cycle_pos = 128;        // 50% Duty Cycle
     devcfg.mode = 0;
     devcfg.spics_io_num = GPIO_CS;
@@ -95,34 +95,31 @@ void DoSpiSetup()
 
     // Annehmen, dass der Slave beim ersten Mal schon bereit ist
     xSemaphoreGive(rdySem);
+
+    Serial.println("SPI Master bereit.");
 }
 
-spi_transaction_t DoSpiTransmissionPrepparation()
+void DoSpiTransmission()
 {
-	int res = snprintf(sendbuf, sizeof(sendbuf), "Sender, transmission no. %04i. Last time, I received: \"%s\"", n, recvbuf);
-    if (res >= (int)sizeof(sendbuf)) {
-        Serial.println("Data truncated");
-    }
+	// int res = snprintf(sendbuf, sizeof(sendbuf), "sender, transmission no. %04i. last time, i received: \"%s\"", n, recvbuf);
+	// if (res >= (int)sizeof(sendbuf)) {
+	// // serial.println("data truncated");
+	// }
 
     spi_transaction_t t = {};
     t.length = sizeof(sendbuf) * 8;
     t.tx_buffer = sendbuf;
     t.rx_buffer = recvbuf;
-	
-	return t;
-}
 
-void DoSpiTransmission(spi_transaction_t t)
-{
-	// Warten bis der Slave bereit ist
+    // Warten bis der Slave bereit ist
     xSemaphoreTake(rdySem, portMAX_DELAY);
 
     esp_err_t ret = spi_device_transmit(handle, &t);
     if (ret == ESP_OK) {
-        Serial.printf("Received: %s\n", recvbuf);
+        Serial.write(recvbuf, t.rxlength / 8); // rxlength ist in Bits
     } else {
-        Serial.printf("Transmit Fehler: %d\n", ret);
+     // serial.printf("transmit fehler: %d\n", ret);
     }
 
-    n++;
+    // n++;
 }

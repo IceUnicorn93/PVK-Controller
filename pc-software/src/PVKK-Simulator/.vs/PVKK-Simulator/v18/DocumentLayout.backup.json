@@ -7,6 +7,10 @@
       "RelativeMoniker": "D:0:0:{FBCE028B-4C99-4C31-93AA-F5BF8B6B4C70}|PVKK-Serial-Test\\PVKK-Serial-Test.csproj|solutionrelative:pvkk-serial-test\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     },
     {
+      "AbsoluteMoniker": "D:0:0:{FBCE028B-4C99-4C31-93AA-F5BF8B6B4C70}|PVKK-Serial-Test\\PVKK-Serial-Test.csproj|e:\\c# repos\\pvk-controller\\pc-software\\src\\pvkk-simulator\\pvkk-serial-test\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form",
+      "RelativeMoniker": "D:0:0:{FBCE028B-4C99-4C31-93AA-F5BF8B6B4C70}|PVKK-Serial-Test\\PVKK-Serial-Test.csproj|solutionrelative:pvkk-serial-test\\form1.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}|Form"
+    },
+    {
       "AbsoluteMoniker": "D:0:0:{FBCE028B-4C99-4C31-93AA-F5BF8B6B4C70}|PVKK-Serial-Test\\PVKK-Serial-Test.csproj|E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\pvkk-serial-test\\structs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}",
       "RelativeMoniker": "D:0:0:{FBCE028B-4C99-4C31-93AA-F5BF8B6B4C70}|PVKK-Serial-Test\\PVKK-Serial-Test.csproj|solutionrelative:pvkk-serial-test\\structs.cs||{A6C744A8-0E4A-4FC6-886A-064283054674}"
     }
@@ -18,7 +22,7 @@
       "DocumentGroups": [
         {
           "DockedWidth": 178,
-          "SelectedChildIndex": 3,
+          "SelectedChildIndex": 4,
           "Children": [
             {
               "$type": "Bookmark",
@@ -34,26 +38,38 @@
             },
             {
               "$type": "Document",
+              "DocumentIndex": 1,
+              "Title": "Form1.cs [Entwurf]",
+              "DocumentMoniker": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Form1.cs",
+              "RelativeDocumentMoniker": "PVKK-Serial-Test\\Form1.cs",
+              "ToolTip": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Form1.cs [Entwurf]",
+              "RelativeToolTip": "PVKK-Serial-Test\\Form1.cs [Entwurf]",
+              "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
+              "WhenOpened": "2026-04-06T07:22:42.454Z",
+              "EditorCaption": " [Entwurf]"
+            },
+            {
+              "$type": "Document",
               "DocumentIndex": 0,
               "Title": "Form1.cs",
               "DocumentMoniker": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Form1.cs",
               "RelativeDocumentMoniker": "PVKK-Serial-Test\\Form1.cs",
-              "ToolTip": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Form1.cs*",
-              "RelativeToolTip": "PVKK-Serial-Test\\Form1.cs*",
-              "ViewState": "AgIAAC0AAAAAAAAAAAAowD8AAAAkAAAAAAAAAA==",
+              "ToolTip": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Form1.cs",
+              "RelativeToolTip": "PVKK-Serial-Test\\Form1.cs",
+              "ViewState": "AgIAAGgAAAAAAAAAAIAwwKEAAAAnAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-21T17:19:01.379Z",
               "EditorCaption": ""
             },
             {
               "$type": "Document",
-              "DocumentIndex": 1,
+              "DocumentIndex": 2,
               "Title": "Structs.cs",
               "DocumentMoniker": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Structs.cs",
               "RelativeDocumentMoniker": "PVKK-Serial-Test\\Structs.cs",
               "ToolTip": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\Structs.cs",
               "RelativeToolTip": "PVKK-Serial-Test\\Structs.cs",
-              "ViewState": "AgIAAAYAAAAAAAAAAAAAABMAAAAQAAAAAAAAAA==",
+              "ViewState": "AgIAABMAAAAAAAAAAAAgwCQAAAAQAAAAAAAAAA==",
               "Icon": "ae27a6b0-e345-4288-96df-5eaf394ee369.000738|",
               "WhenOpened": "2026-03-16T15:11:16.3Z",
               "EditorCaption": ""

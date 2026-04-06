@@ -1,3 +1,4 @@
+// IMPORTANT: These Sizes have be divadable by 4! Neccessary for SPI
 const uint8_t PayloadSize = 242;
 const uint8_t AnswerSize = 244;
 
