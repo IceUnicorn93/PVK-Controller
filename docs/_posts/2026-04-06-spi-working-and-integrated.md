@@ -29,7 +29,7 @@ My best guess is that the signal on the MOSI line was ringing or overshooting du
 
 It took me a bit of time to get most of the kinks out of the system. The SPI communication and the firmware structure are actually combined — the Master Gateway is sending **real payload data** to the PCB. From the PCB side, I'm currently sending back **dummy data for debugging purposes**, just to confirm the return path works correctly. So far, so good.
 
-![SPI Master and Slave Wired Up and Communicating](../images/2026-04-06/SPI Master and Slave Wired Up and Communicating.jpg)
+<img src="../../images/2026-04-06/SPI Master and Slave Wired Up and Communicating.jpg" alt="SPI Master and Slave Wired Up and Communicating">
 
 ---
 
@@ -42,7 +42,7 @@ I also used the motivation from working SPI to finally create a **custom 14-segm
 
 This turned out to be way faster and more reliable than trying to draw each character manually.
 
-![Custom Font for U8G2 Displays](../images/2026-04-06/Custom Font for U8G2 Displays.jpg)
+<img src="../../images/2026-04-06/Custom Font for U8G2 Displays.jpg" alt="Custom Font for U8G2 Displays">
 
 ---
 
