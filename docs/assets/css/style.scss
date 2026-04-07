@@ -1,0 +1,25 @@
+---
+---
+
+@import 'jekyll-theme-merlot';
+
+/* Layout breiter machen */
+div.shell {
+  width: 960px;          /* Hauptcontainer breiter (Standard: 670px) */
+}
+
+header {
+  max-width: 860px;      /* Header-Banner mitziehen (Standard: 600px) */
+}
+
+footer {
+  max-width: 860px;      /* Footer ebenfalls breiter (Standard: 560px) */
+}
+
+section#main_content {
+  padding: 20px 60px 0;  /* Etwas weniger Innenabstand als der Standard (82px) */
+}
+
+img {
+  max-width: 100%;        /* Bilder sollen nicht über den Rand hinausragen */
+}
