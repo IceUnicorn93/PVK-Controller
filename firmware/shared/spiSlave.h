@@ -16,7 +16,7 @@
 
 
 #define RCV_HOST        SPI2_HOST
-#define BUF_SIZE        (244 + 1)
+#define BUF_SIZE        (62 + 1)
 
 // Callbacks für Handshake-Leitung
 void IRAM_ATTR my_post_setup_cb(spi_slave_transaction_t *trans) {
@@ -89,7 +89,7 @@ void DoSpiTransmission()
 
     // Transaktion konfigurieren
     spi_slave_transaction_t t = {};
-    t.length = 244 * 8;
+    t.length = 62 * 8;
     t.tx_buffer = sendbuf;
     t.rx_buffer = recvbuf;
 	
@@ -105,7 +105,7 @@ void DoSpiTransmission()
         //Serial.println("slave paused ...");
     }
 
-    delay(5);
+    delay(1);
 
     ret = spi_slave_enable(RCV_HOST);
     if (ret == ESP_OK) {

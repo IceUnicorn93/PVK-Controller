@@ -44,8 +44,8 @@ namespace PVKK_Serial_Test
         }
 
 
-        const byte PayloadSize = 242;
-        const byte AnswerSize = 244;
+        const byte PayloadSize = 60;
+        const byte AnswerSize = 62;
 
         /*
         Payload for Boards
@@ -86,12 +86,12 @@ namespace PVKK_Serial_Test
         [StructLayout(LayoutKind.Sequential, Pack = 1)]
         public struct PayloadBoard1
         {
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 137)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = 35)]
             public byte[] leds;
             public byte brightness;
             [MarshalAs(UnmanagedType.ByValArray, SizeConst = 5)]
             public byte[] displays;
-            [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize - 137 - 1 - 5)]
+            [MarshalAs(UnmanagedType.ByValArray, SizeConst = PayloadSize - 35 - 1 - 5)]
             public byte[] spare;
         }
         [StructLayout(LayoutKind.Sequential, Pack = 1)]

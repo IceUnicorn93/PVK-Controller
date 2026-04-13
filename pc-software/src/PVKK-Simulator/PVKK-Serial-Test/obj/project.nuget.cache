@@ -1,0 +1,13 @@
+{
+  "version": 2,
+  "dgSpecHash": "D93+NoogW7c=",
+  "success": true,
+  "projectFilePath": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\PVKK-Serial-Test.csproj",
+  "expectedPackageFiles": [
+    "C:\\Users\\jopla\\.nuget\\packages\\system.buffers\\4.6.1\\system.buffers.4.6.1.nupkg.sha512",
+    "C:\\Users\\jopla\\.nuget\\packages\\system.memory\\4.6.3\\system.memory.4.6.3.nupkg.sha512",
+    "C:\\Users\\jopla\\.nuget\\packages\\system.numerics.vectors\\4.6.1\\system.numerics.vectors.4.6.1.nupkg.sha512",
+    "C:\\Users\\jopla\\.nuget\\packages\\system.runtime.compilerservices.unsafe\\6.1.2\\system.runtime.compilerservices.unsafe.6.1.2.nupkg.sha512"
+  ],
+  "logs": []
+}

@@ -26,8 +26,8 @@ static void IRAM_ATTR gpio_handshake_isr_handler(void *arg) {
     static uint32_t lasthandshaketime_us = 0;
     uint32_t currtime_us = esp_timer_get_time();
     uint32_t diff = currtime_us - lasthandshaketime_us;
-    if (diff < 1000) {
-        return; // Interrupts < 1ms nach dem letzten ignorieren
+    if (diff < 100) {
+        return; // Interrupts < 100us nach dem letzten ignorieren
     }
     lasthandshaketime_us = currtime_us;
 
@@ -40,8 +40,8 @@ static void IRAM_ATTR gpio_handshake_isr_handler(void *arg) {
 
 spi_device_handle_t handle;
 int n = 0;
-char sendbuf[244] = {0};
-char recvbuf[244] = {0};
+char sendbuf[62] = {0};
+char recvbuf[62] = {0};
 
 void DoSpiSetup()
 {
@@ -73,7 +73,7 @@ void DoSpiSetup()
     devcfg.command_bits = 0;
     devcfg.address_bits = 0;
     devcfg.dummy_bits = 0;
-    devcfg.clock_speed_hz = 3 * 1000 * 1000; // 3MHz
+    devcfg.clock_speed_hz = 6 * 1000 * 1000; // 3MHz
     devcfg.duty_cycle_pos = 128;        // 50% Duty Cycle
     devcfg.mode = 0;
     devcfg.spics_io_num = GPIO_CS;

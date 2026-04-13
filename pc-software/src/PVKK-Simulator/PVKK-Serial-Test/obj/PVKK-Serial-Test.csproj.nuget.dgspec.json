@@ -1,0 +1,56 @@
+{
+  "format": 1,
+  "restore": {
+    "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\PVKK-Serial-Test.csproj": {}
+  },
+  "projects": {
+    "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\PVKK-Serial-Test.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\PVKK-Serial-Test.csproj",
+        "projectName": "PVKK-Serial-Test",
+        "projectPath": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\PVKK-Serial-Test.csproj",
+        "packagesPath": "C:\\Users\\jopla\\.nuget\\packages\\",
+        "outputPath": "E:\\C# Repos\\PVK-Controller\\pc-software\\src\\PVKK-Simulator\\PVKK-Serial-Test\\obj\\",
+        "projectStyle": "PackageReference",
+        "skipContentFileWrite": true,
+        "UsingMicrosoftNETSdk": false,
+        "fallbackFolders": [
+          "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
+        ],
+        "configFilePaths": [
+          "C:\\Users\\jopla\\AppData\\Roaming\\NuGet\\NuGet.Config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.FallbackLocation.config",
+          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+        ],
+        "originalTargetFrameworks": [
+          "net472"
+        ],
+        "sources": {
+          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net472": {
+            "projectReferences": {}
+          }
+        },
+        "restoreAuditProperties": {
+          "enableAudit": "true",
+          "auditLevel": "low",
+          "auditMode": "direct"
+        }
+      },
+      "frameworks": {
+        "net472": {
+          "dependencies": {
+            "System.Memory": {
+              "target": "Package",
+              "version": "[4.6.3, )"
+            }
+          }
+        }
+      }
+    }
+  }
+}

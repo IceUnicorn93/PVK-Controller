@@ -8,3 +8,8 @@ E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\D
 E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.exe
 E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Serial-Test.pdb
 E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK_Serial_Test.Form1.resources
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\System.Buffers.dll
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\System.Memory.dll
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\System.Numerics.Vectors.dll
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\bin\Debug\System.Runtime.CompilerServices.Unsafe.dll
+E:\C# Repos\PVK-Controller\pc-software\src\PVKK-Simulator\PVKK-Serial-Test\obj\Debug\PVKK-Ser.2157EA4A.Up2Date

@@ -1,6 +1,6 @@
 // IMPORTANT: These Sizes have be divadable by 4! Neccessary for SPI
-const uint8_t PayloadSize = 242;
-const uint8_t AnswerSize = 244;
+const uint8_t PayloadSize = 60;
+const uint8_t AnswerSize = 62;
 
 /*
 Payload for Boards
@@ -36,10 +36,10 @@ typedef struct __attribute__((packed)) {
 // Board 1 (Upper Center)
 //--------------------------------------------------------------------------------
 typedef struct __attribute__((packed)) {
-    uint8_t leds[137];       // 0=Off, 1=Primary, 2=Secondary
+    uint8_t leds[35];       // 0=Off, 1=Primary, 2=Secondary
     uint8_t brightness;      // 0-100
     uint8_t displays[5];     // 0-255, für u8g2 Displays
-	uint8_t spare[PayloadSize - 137 - 1 - 5] ; // Spare Data
+	uint8_t spare[PayloadSize - 35 - 1 - 5] ; // Spare Data
 } PayloadBoard1;
 typedef struct __attribute__((packed)) {
     uint8_t AmmoSelection;
@@ -173,6 +173,8 @@ typedef struct __attribute__((packed)) {
 typedef struct __attribute__((packed)) {
 	uint8_t spare[AnswerSize] ; // Spare Data
 } AnswerBoard6;
+//--------------------------------------------------------------------------------
+// Checksum calculation
 //--------------------------------------------------------------------------------
 uint8_t calcChecksum(uint8_t* data, size_t len) {
   uint8_t sum = 0;

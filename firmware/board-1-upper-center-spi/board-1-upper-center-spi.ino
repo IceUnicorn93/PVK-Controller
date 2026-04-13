@@ -450,10 +450,17 @@ void loop()
     PayloadBoard1 payload;
     memcpy(&payload, packet.payload, sizeof(PayloadBoard1));
 
+    // Decompress 35 bytes → 137 × 2-bit LED values and set pixel colors
     for(int i = 0; i < NUMPIXELS; i++)
-      if(payload.leds[i] == 0) pixels.setPixelColor(i, 0);
-      else if(payload.leds[i] == 1) pixels.setPixelColor(i, ledColors_1[i]);
-      else  if(payload.leds[i] == 2) pixels.setPixelColor(i, ledColors_2[i]);
+    {
+      uint8_t byteIndex = i / 4;
+      uint8_t bitShift  = 6 - (i % 4) * 2;
+      uint8_t value     = (payload.leds[byteIndex] >> bitShift) & 0b11;
+
+      if(value == 1)      pixels.setPixelColor(i, ledColors_1[i]);
+      else if(value == 2) pixels.setPixelColor(i, ledColors_2[i]);
+      else                pixels.setPixelColor(i, 0);
+    }
     
     pixels.setBrightness(payload.brightness);
     pixels.show();

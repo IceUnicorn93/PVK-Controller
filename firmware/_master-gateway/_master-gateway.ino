@@ -2,18 +2,21 @@
 #include "..\shared\spiMaster.h"
 
 void setup() {
-  Serial.begin(115200);
+  Serial.begin(921600); //  1500000
 
   DoSpiSetup();
 
   delay(2000);
+
+  // Serial-Buffer leeren – entfernt Rauschbytes vom Boot/Port-Öffnen
+  while (Serial.available()) Serial.read();
 }
 
 void loop() {
 
   // Wait until Serial has recevied a SerialPacket
   while (Serial.available() < sizeof(SerialPacket))
-    delay(10);
+    delayMicroseconds(1);
 
   // Parse the Serial Data in the SerialPacket
   SerialPacket packet;
@@ -22,7 +25,7 @@ void loop() {
   // Check the Checksum of the received Package (Checksum of Payload Data)
   uint8_t calculatedChecksum = calcChecksum(packet.payload, PayloadSize);
   if (calculatedChecksum != packet.checksum) {
-    Serial.println("Checksum Error!");
+    Serial.println(calculatedChecksum); //"Checksum Error! %n", 
     return; // Discard the packet if checksum is incorrect
   }
 
@@ -35,29 +38,12 @@ void loop() {
       memcpy(sendbuf, &packet, sizeof(SerialPacket));
 
       DoSpiTransmission();
-
-      //sending all received data from the slave to the serial monitor
-      // for(int i = 0; i < sizeof(AnswerBoard1); i++)
-      //   Serial.print(recvbuf[i]);
-      // Serial.println("");
-
-      // Serial.write(recvbuf, 244);
       break;
     }
     // case 2:
+    //{
     //   delay(1);
     //   break;
-    // case 3:
-    //   delay(1);
-    //   break;
-    // case 4:
-    //   delay(1);
-    //   break;
-    // case 5:
-    //   delay(1);
-    //   break;
-    // case 6:
-    //   delay(1);
-    //   break;
+    //}
   }
 }
