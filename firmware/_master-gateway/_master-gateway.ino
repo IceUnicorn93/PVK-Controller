@@ -37,7 +37,7 @@ void loop() {
       memset(sendbuf, 0, sizeof(SerialPacket));
       memcpy(sendbuf, &packet, sizeof(SerialPacket));
 
-      DoSpiTransmission();
+      DoSpiTransmission(0);
       break;
     }
     // case 2:

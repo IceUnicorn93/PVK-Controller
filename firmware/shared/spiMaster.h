@@ -7,60 +7,43 @@
 #include <driver/gpio.h>
 #include <esp_timer.h>
 
-// Pin-Konfiguration
-// Sichere Pins für ESP32 DevKit C V4
-#define GPIO_HANDSHAKE  4
+// Gemeinsame Bus-Pins
 #define GPIO_MOSI       23
 #define GPIO_MISO       19
 #define GPIO_SCLK       18
-#define GPIO_CS         5
-
-
 #define SENDER_HOST     SPI2_HOST
 
-// Semaphore: signalisiert, dass der Slave bereit ist
-static SemaphoreHandle_t rdySem;
+// Anzahl der Slaves
+#define NUM_SLAVES      3
 
-// ISR für die Handshake-Leitung
+// Pro Slave: CS-Pin und Handshake-Pin
+static const int GPIO_CS[NUM_SLAVES]        = { 5,  15, 16 };
+static const int GPIO_HANDSHAKE[NUM_SLAVES] = { 4,  17, 21 };
+
+// Pro Slave: Device-Handle und Semaphore
+static spi_device_handle_t handle[NUM_SLAVES];
+static SemaphoreHandle_t   rdySem[NUM_SLAVES];
+
+// Buffers pro Slave
+static char sendbuf[NUM_SLAVES][62] = {0};
+static char recvbuf[NUM_SLAVES][62] = {0};
+
+// ISR – der arg-Parameter enthält den Slave-Index
 static void IRAM_ATTR gpio_handshake_isr_handler(void *arg) {
-    static uint32_t lasthandshaketime_us = 0;
-    uint32_t currtime_us = esp_timer_get_time();
-    uint32_t diff = currtime_us - lasthandshaketime_us;
-    if (diff < 100) {
-        return; // Interrupts < 100us nach dem letzten ignorieren
-    }
-    lasthandshaketime_us = currtime_us;
+    int slaveIdx = (int)(intptr_t)arg;
+
+    static uint32_t lasttime_us[NUM_SLAVES] = {0};
+    uint32_t now = esp_timer_get_time();
+    if (now - lasttime_us[slaveIdx] < 100) return;
+    lasttime_us[slaveIdx] = now;
 
     BaseType_t mustYield = pdFALSE;
-    xSemaphoreGiveFromISR(rdySem, &mustYield);
-    if (mustYield) {
-        portYIELD_FROM_ISR();
-    }
+    xSemaphoreGiveFromISR(rdySem[slaveIdx], &mustYield);
+    if (mustYield) portYIELD_FROM_ISR();
 }
 
-spi_device_handle_t handle;
-int n = 0;
-char sendbuf[62] = {0};
-char recvbuf[62] = {0};
-
-void DoSpiSetup()
-{
-	// Semaphore erstellen
-    rdySem = xSemaphoreCreateBinary();
-
-    // Handshake-Pin als Input mit Interrupt auf steigende Flanke
-    gpio_config_t io_conf = {};
-    io_conf.intr_type = GPIO_INTR_POSEDGE;
-    io_conf.mode = GPIO_MODE_INPUT;
-    io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
-    io_conf.pin_bit_mask = (1ULL << GPIO_HANDSHAKE);
-    gpio_config(&io_conf);
-
-    gpio_install_isr_service(0);
-    gpio_set_intr_type((gpio_num_t)GPIO_HANDSHAKE, GPIO_INTR_POSEDGE);
-    gpio_isr_handler_add((gpio_num_t)GPIO_HANDSHAKE, gpio_handshake_isr_handler, NULL);
-
-    // SPI-Bus-Konfiguration
+void DoSpiSetup() {
+    // SPI-Bus einmalig initialisieren
     spi_bus_config_t buscfg = {};
     buscfg.mosi_io_num = GPIO_MOSI;
     buscfg.miso_io_num = GPIO_MISO;
@@ -68,58 +51,67 @@ void DoSpiSetup()
     buscfg.quadwp_io_num = -1;
     buscfg.quadhd_io_num = -1;
 
-    // SPI-Device-Konfiguration
-    spi_device_interface_config_t devcfg = {};
-    devcfg.command_bits = 0;
-    devcfg.address_bits = 0;
-    devcfg.dummy_bits = 0;
-    devcfg.clock_speed_hz = 6 * 1000 * 1000; // 3MHz
-    devcfg.duty_cycle_pos = 128;        // 50% Duty Cycle
-    devcfg.mode = 0;
-    devcfg.spics_io_num = GPIO_CS;
-    devcfg.cs_ena_posttrans = 3;        // CS 3 Zyklen nach Transaktion low halten
-    devcfg.queue_size = 3;
-
-    // SPI Bus initialisieren und Device hinzufügen
     esp_err_t ret = spi_bus_initialize(SENDER_HOST, &buscfg, SPI_DMA_CH_AUTO);
     if (ret != ESP_OK) {
         Serial.println("SPI Bus Init fehlgeschlagen!");
-        while (1) { delay(1000); }
+        while (1) delay(1000);
     }
 
-    ret = spi_bus_add_device(SENDER_HOST, &devcfg, &handle);
-    if (ret != ESP_OK) {
-        Serial.println("SPI Device hinzufuegen fehlgeschlagen!");
-        while (1) { delay(1000); }
+    gpio_install_isr_service(0);
+
+    // Jeden Slave konfigurieren
+    for (int i = 0; i < NUM_SLAVES; i++) {
+        // Semaphore
+        rdySem[i] = xSemaphoreCreateBinary();
+
+        // Handshake-Pin
+        gpio_config_t io_conf = {};
+        io_conf.intr_type = GPIO_INTR_POSEDGE;
+        io_conf.mode = GPIO_MODE_INPUT;
+        io_conf.pull_up_en = GPIO_PULLUP_ENABLE;
+        io_conf.pin_bit_mask = (1ULL << GPIO_HANDSHAKE[i]);
+        gpio_config(&io_conf);
+        gpio_set_intr_type((gpio_num_t)GPIO_HANDSHAKE[i], GPIO_INTR_POSEDGE);
+        // Slave-Index als Argument übergeben
+        gpio_isr_handler_add((gpio_num_t)GPIO_HANDSHAKE[i],
+                             gpio_handshake_isr_handler, (void*)(intptr_t)i);
+
+        // SPI-Device mit eigenem CS-Pin
+        spi_device_interface_config_t devcfg = {};
+        devcfg.clock_speed_hz = 6 * 1000 * 1000;
+        devcfg.duty_cycle_pos = 128;
+        devcfg.mode = 0;
+        devcfg.spics_io_num = GPIO_CS[i];
+        devcfg.cs_ena_posttrans = 3;
+        devcfg.queue_size = 3;
+
+        ret = spi_bus_add_device(SENDER_HOST, &devcfg, &handle[i]);
+        if (ret != ESP_OK) {
+            Serial.printf("Slave %d hinzufuegen fehlgeschlagen!\n", i);
+            while (1) delay(1000);
+        }
+
+        // Annehmen, dass Slave beim Start bereit ist
+        xSemaphoreGive(rdySem[i]);
     }
 
-    // Annehmen, dass der Slave beim ersten Mal schon bereit ist
-    xSemaphoreGive(rdySem);
-
-    Serial.println("SPI Master bereit.");
+    Serial.println("SPI Master bereit fuer alle Slaves.");
 }
 
-void DoSpiTransmission()
-{
-	// int res = snprintf(sendbuf, sizeof(sendbuf), "sender, transmission no. %04i. last time, i received: \"%s\"", n, recvbuf);
-	// if (res >= (int)sizeof(sendbuf)) {
-	// // serial.println("data truncated");
-	// }
+// Übertragung an einen bestimmten Slave
+void DoSpiTransmission(int slaveIdx) {
+    if (slaveIdx < 0 || slaveIdx >= NUM_SLAVES) return;
 
     spi_transaction_t t = {};
-    t.length = sizeof(sendbuf) * 8;
-    t.tx_buffer = sendbuf;
-    t.rx_buffer = recvbuf;
+    t.length    = sizeof(sendbuf[slaveIdx]) * 8;
+    t.tx_buffer = sendbuf[slaveIdx];
+    t.rx_buffer = recvbuf[slaveIdx];
 
-    // Warten bis der Slave bereit ist
-    xSemaphoreTake(rdySem, portMAX_DELAY);
+    xSemaphoreTake(rdySem[slaveIdx], portMAX_DELAY);
 
-    esp_err_t ret = spi_device_transmit(handle, &t);
+    esp_err_t ret = spi_device_transmit(handle[slaveIdx], &t);
     if (ret == ESP_OK) {
-        Serial.write(recvbuf, t.rxlength / 8); // rxlength ist in Bits
-    } else {
-     // serial.printf("transmit fehler: %d\n", ret);
+        Serial.printf("[Slave %d] ", slaveIdx);
+        Serial.write(recvbuf[slaveIdx], t.rxlength / 8);
     }
-
-    // n++;
 }

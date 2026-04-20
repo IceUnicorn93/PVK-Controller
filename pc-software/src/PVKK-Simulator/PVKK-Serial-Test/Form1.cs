@@ -223,7 +223,6 @@ namespace PVKK_Serial_Test
                     await Task.Delay(waitingTime); // Kurze Verzögerung, um CPU-Last zu reduzieren || 
                 }
                 sw.Stop();
-
                 port.Close();
             }
         }
